@@ -1,13 +1,17 @@
-import {HomeComponent} from '../home/home.component';
-import {ContactsComponent} from '../contacts/contacts.component';
 import {RouterModule} from "@angular/router";
 
 const routes = [
     {
-        path: '', component: HomeComponent
+        path: '',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../home/home.module'], (module: any) => resolve(module.HomeModule));
+        })
     },
     {
-        path: 'contacts', component: ContactsComponent
+        path: 'contacts',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../contacts/contacts.module'], (module: any) => resolve(module.ContactsModule))
+        })
     }
 ];
 
