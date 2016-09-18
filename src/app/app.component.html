@@ -1,6 +1,7 @@
 <ul class="nav nav-pills">
     <li routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"><a>Home</a></li>
-    <li routerLink="contacts" routerLinkActive="active"><a>Contacts</a></li>
+    <li routerLink="contacts" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"><a>Contacts</a></li>
+    <li routerLink="contacts/1" routerLinkActive="active"><a>First Contact</a></li>
 </ul>
 <div class="container">
     <router-outlet></router-outlet>
