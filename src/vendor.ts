@@ -8,3 +8,6 @@ import '@angular/platform-browser-dynamic';
 
 // RxJS
 // import 'rxjs';
+
+// Bootstrap
+import 'bootstrap/dist/css/bootstrap.css'
