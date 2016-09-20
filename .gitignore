@@ -2,3 +2,4 @@ node_modules/
 typings/
 public/
 npm-debug.log
+.idea/
