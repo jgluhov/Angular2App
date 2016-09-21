@@ -8,6 +8,6 @@ import {Component} from '@angular/core';
 export class AppComponent {
     navs = [
         {url: '', content: 'Home'},
-        {url: 'contacts', content: 'Contacts'}
+        {url: 'posts', content: 'Posts'}
     ]
 }

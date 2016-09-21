@@ -8,9 +8,9 @@ const routes = [
         })
     },
     {
-        path: 'contacts',
+        path: 'posts',
         loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../contacts/contacts.module'], (module: any) => resolve(module.ContactsModule))
+            (require as any)(['../posts/posts.module'], (module: any) => resolve(module.PostsModule))
         })
     }
 ];
