@@ -18,7 +18,7 @@ describe('AppComponent', () => {
         });
     }));
 
-    it('#create AppComponent', () => {
-        expect(fixture.componentInstance instanceof AppComponent).toBe(true, 'should create AppComponent');
+    it('should #create AppComponent', () => {
+        expect(comp instanceof AppComponent).toBe(true, '#create AppComponent');
     });
 });

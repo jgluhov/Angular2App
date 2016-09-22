@@ -15,7 +15,7 @@ describe('HomeComponent', () => {
         });
     }));
 
-    it('#create HomeComponent', () => {
-        expect(fixture.componentInstance instanceof HomeComponent).toBe(true, 'should create HomeComponent');
+    it('should #create HomeComponent', () => {
+        expect(comp instanceof HomeComponent).toBe(true, '#create HomeComponent');
     });
 });
