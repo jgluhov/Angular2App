@@ -1,15 +1,29 @@
-import {Component} from '@angular/core';
-import {Http} from "@angular/http";
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Subject} from 'rxjs/Subject';
+import {PostsService} from "./posts.service";
+
 import 'rxjs/add/operator/map';
+import {Subscription} from "rxjs";
 
 @Component({
     templateUrl: './posts.component.html'
 })
 
-export class PostsComponent {
-    posts$: any;
+export class PostsComponent implements OnInit, OnDestroy {
+    items: Array<Object>;
+    posts$ = new Subject();
+    postsSubscription: Subscription;
 
-    constructor(private http: Http) {
-        this.posts$ = http.get('http://jsonplaceholder.typicode.com/posts').map(res => res.json());
+    constructor(private service: PostsService) {}
+
+    ngOnInit() {
+        this.postsSubscription = this.service.getPosts(this.posts$)
+            .subscribe(results => this.items = results);
+
+        this.posts$.next();
+    }
+
+    ngOnDestroy() {
+        this.postsSubscription.unsubscribe();
     }
 }
