@@ -1,10 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {WikipediaSearchService} from "./wikipedia-search.service";
 import {Subject} from 'rxjs/Subject';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/switchMap';
 import {Subscription} from "rxjs";
 
 @Component({
@@ -12,7 +8,7 @@ import {Subscription} from "rxjs";
 })
 
 export class WikipediaComponent implements OnInit, OnDestroy {
-    items: Array<string>;
+    items: any;
     term$ = new Subject<string>();
     searchSubscription: Subscription;
 
@@ -20,7 +16,7 @@ export class WikipediaComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.searchSubscription = this.service.search(this.term$)
-            .subscribe(results => this.items = results);
+            .subscribe(data => this.items = data);
     }
 
     ngOnDestroy() {

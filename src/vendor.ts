@@ -9,5 +9,8 @@ import '@angular/router';
 // RxJS
 // import 'rxjs';
 
+// Lodash
+import 'lodash';
+
 // Bootstrap
-import 'bootstrap/dist/css/bootstrap.css'
+require('bootstrap/dist/css/bootstrap.css');

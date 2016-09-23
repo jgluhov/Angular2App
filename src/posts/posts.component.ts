@@ -10,7 +10,7 @@ import {Subscription} from "rxjs";
 })
 
 export class PostsComponent implements OnInit, OnDestroy {
-    items: Array<Object>;
+    posts: Array<Object>;
     posts$ = new Subject();
     postsSubscription: Subscription;
 
@@ -18,7 +18,7 @@ export class PostsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.postsSubscription = this.service.getPosts(this.posts$)
-            .subscribe(results => this.items = results);
+            .subscribe((data: Array<Object>)  => this.posts = data);
 
         this.posts$.next();
     }

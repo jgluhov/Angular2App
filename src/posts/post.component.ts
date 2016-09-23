@@ -1,26 +1,29 @@
-import {Component} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/startWith";
 import "rxjs/add/operator/share";
 
-import {Http} from "@angular/http";
+import {Subscription} from "rxjs";
+import {PostsService} from "./posts.service";
 
 @Component({
     templateUrl: './post.component.html'
 })
 
-export class PostComponent{
-    post$:any;
+export class PostComponent implements OnInit, OnDestroy {
+    post: Object;
+    postSubscription: Subscription;
 
-    constructor(private route:ActivatedRoute, private http:Http) {
-        this.post$ = route.params
-            .map((p:any) => p.id)
-            .switchMap((id:any) =>
-                http.get(`http://jsonplaceholder.typicode.com/posts/${id}`).map(res => res.json())
-            )
-            .share()
-            .startWith({title: '', body: ''});
+    constructor(private route: ActivatedRoute, private service: PostsService) {}
+
+    ngOnInit() {
+        this.postSubscription = this.service.getPost(this.route.params.map((params: any) => params.id))
+            .subscribe(data => this.post = data);
+    }
+
+    ngOnDestroy() {
+        this.postSubscription.unsubscribe();
     }
 }
