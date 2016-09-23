@@ -5,7 +5,9 @@
     <form>
         <div class="form-group">
             <label for="search" class="sr-only"></label>
-            <input type="text" id="search" (input)="search($event.target.value)" class="form-control" placeholder="Search">
+            <input type="text" id="search" class="form-control input-lg" placeholder="Search"
+                   (input)="term$.next($event.target.value)"
+            >
         </div>
     </form>
     <ul class="list-unstyled">
