@@ -3,7 +3,7 @@ import {Http} from "@angular/http";
 import 'rxjs/add/operator/map';
 
 @Component({
-    templateUrl: 'posts.component.html'
+    templateUrl: './posts.component.html'
 })
 
 export class PostsComponent {

@@ -1,16 +1,22 @@
-import {RouterModule} from "@angular/router";
+import {RouterModule, Routes} from "@angular/router";
 
-const routes = [
+const routes: Routes = [
+    {
+        path: 'posts',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../posts/posts.module'], (module: any) => resolve(module.PostsModule));
+        })
+    },
+    {
+        path: 'wikipedia',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../wikipedia/wikipedia.module'], (module: any) => resolve(module.WikipediaModule));
+        })
+    },
     {
         path: '',
         loadChildren: () => new Promise((resolve) => {
             (require as any)(['../home/home.module'], (module: any) => resolve(module.HomeModule));
-        })
-    },
-    {
-        path: 'posts',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../posts/posts.module'], (module: any) => resolve(module.PostsModule))
         })
     }
 ];

@@ -1,8 +1,8 @@
-import {RouterModule} from "@angular/router";
+import {RouterModule, Routes} from "@angular/router";
 import {PostsComponent} from "./posts.component";
 import {PostComponent} from "./post.component";
 
-const routes = [
+const routes: Routes = [
     {
         path: '', component: PostsComponent
     },

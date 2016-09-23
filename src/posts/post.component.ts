@@ -8,7 +8,7 @@ import "rxjs/add/operator/share";
 import {Http} from "@angular/http";
 
 @Component({
-    templateUrl: 'post.component.html'
+    templateUrl: './post.component.html'
 })
 
 export class PostComponent{
