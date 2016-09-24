@@ -8,7 +8,7 @@ import {Subscription} from "rxjs";
 })
 
 export class WikipediaComponent implements OnInit, OnDestroy {
-    items: any;
+    items: Array<Object>;
     term$ = new Subject<string>();
     searchSubscription: Subscription;
 
@@ -16,7 +16,7 @@ export class WikipediaComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.searchSubscription = this.service.search(this.term$)
-            .subscribe(data => this.items = data);
+            .subscribe((data: Array<Object>) => this.items = data);
     }
 
     ngOnDestroy() {
