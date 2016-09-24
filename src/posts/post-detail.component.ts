@@ -9,10 +9,10 @@ import {Subscription} from "rxjs";
 import {PostsService} from "./posts.service";
 
 @Component({
-    templateUrl: './post.component.html'
+    templateUrl: 'post-detail.component.html'
 })
 
-export class PostComponent implements OnInit, OnDestroy {
+export class PostDetailComponent implements OnInit, OnDestroy {
     post: Object;
     postSubscription: Subscription;
 
