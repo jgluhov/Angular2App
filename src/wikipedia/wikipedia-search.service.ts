@@ -8,7 +8,7 @@ import 'rxjs/add/operator/switchMap'
 
 @Injectable()
 export class WikipediaSearchService {
-    hostUrl: string = 'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK';
+    hostUrl: string = 'http://en.wikipedia.org/w/api.php';
 
     constructor(private jsonp: Jsonp) {}
 
@@ -19,12 +19,14 @@ export class WikipediaSearchService {
     }
 
     private _search(term: string) {
-        let search = new URLSearchParams();
+        let params = new URLSearchParams();
 
-        search.set('action', 'opensearch');
-        search.set('search', term);
-        search.set('format', 'json');
+        params.set('action', 'opensearch');
+        params.set('search', term);
+        params.set('format', 'json');
+        params.set('callback', 'JSONP_CALLBACK');
 
-        return this.jsonp.get(this.hostUrl, {search}).map(res => res.json()[1]);
+        return this.jsonp.get(this.hostUrl, {search: params})
+            .map(res => <string[]> res.json()[1]);
     }
 }
