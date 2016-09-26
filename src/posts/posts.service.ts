@@ -12,13 +12,13 @@ export class PostsService {
 
     constructor(private http: Http) {};
 
-    getPosts(subject: Subject<any>) {
-        return subject.switchMap(() => this.http.get(this.hostUrl).map(res => res.json()))
+    getPosts(): Observable<Array<Object>> {
+        return this.http.get(this.hostUrl).map(res => res.json());
     }
 
-    getPost(id$: Observable<string>) {
+    getPost(id$: Observable<string>): Observable<Object> {
         return id$
-            .switchMap((id: string) => this.http.get(this.hostUrl + '/' + id).map(res => res.json()))
-            .startWith({title: '', body: ''});
+            .switchMap(id => this.http.get(this.hostUrl + '/' + id).map(res => res.json()))
+            .startWith({id: '', title: '', body: ''});
     }
 }
