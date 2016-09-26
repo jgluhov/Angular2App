@@ -5,12 +5,12 @@
     <form>
         <div class="form-group">
             <label for="search" class="sr-only"></label>
-            <input type="text" id="search" class="form-control input-lg" placeholder="Search"
-                   (input)="term$.next($event.target.value)"
+            <input type="text" id="search" #search class="form-control input-lg" placeholder="Search"
+                   (input)="term$.next(search.value)"
             >
         </div>
     </form>
     <ul class="list-unstyled">
-        <li *ngFor="let item of items">{{item}}</li>
+        <li *ngFor="let item of (items$ | async)">{{item}}</li>
     </ul>
 </div>

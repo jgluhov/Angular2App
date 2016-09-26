@@ -12,8 +12,8 @@ export class WikipediaSearchService {
 
     constructor(private jsonp: Jsonp) {}
 
-    search(terms: Observable<string>) {
-        return terms
+    search(terms$: Observable<string>): Observable<Array<Object>> {
+        return terms$
             .debounceTime(400)
             .switchMap(term => this._search(term));
     }

@@ -1,25 +1,19 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {WikipediaSearchService} from "./wikipedia-search.service";
 import {Subject} from 'rxjs/Subject';
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 
 @Component({
     templateUrl: './wikipedia.component.html'
 })
 
-export class WikipediaComponent implements OnInit, OnDestroy {
-    items: Array<Object>;
+export class WikipediaComponent implements OnInit {
+    items$: Observable<Array<Object>>;
     term$ = new Subject<string>();
-    searchSubscription: Subscription;
 
     constructor(private service: WikipediaSearchService) {};
 
     ngOnInit() {
-        this.searchSubscription = this.service.search(this.term$)
-            .subscribe((data: Array<Object>) => this.items = data);
-    }
-
-    ngOnDestroy() {
-        this.searchSubscription.unsubscribe();
+        this.items$ = this.service.search(this.term$);
     }
 }
