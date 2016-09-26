@@ -16,7 +16,7 @@ const routes: Routes = [
     {
         path: 'forms',
         loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../forms/forms.module'], (module: any) => resolve(module.FormsModule));
+            (require as any)(['../contacts/contacts.module'], (module: any) => resolve(module.ContactsModule));
         })
     },
     {

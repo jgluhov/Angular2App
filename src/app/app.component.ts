@@ -10,6 +10,6 @@ export class AppComponent {
         {url: '', content: 'Home'},
         {url: 'posts', content: 'Posts'},
         {url: 'wikipedia', content: 'Wikipedia'},
-        {url: 'forms', content: 'Forms'}
+        {url: 'contacts', content: 'Contacts'}
     ]
 }

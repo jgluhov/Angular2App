@@ -1,9 +1,9 @@
-import {FormsComponent} from './forms.component';
+import {ContactsComponent} from './contacts.component';
 import {RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
     {
-        path: '', component: FormsComponent
+        path: '', component: ContactsComponent
     }
 ];
 
