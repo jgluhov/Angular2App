@@ -9,6 +9,7 @@ export class AppComponent {
     navs = [
         {url: '', content: 'Home'},
         {url: 'posts', content: 'Posts'},
-        {url: 'wikipedia', content: 'Wikipedia'}
+        {url: 'wikipedia', content: 'Wikipedia'},
+        {url: 'forms', content: 'Forms'}
     ]
 }

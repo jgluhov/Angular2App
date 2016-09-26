@@ -14,6 +14,12 @@ const routes: Routes = [
         })
     },
     {
+        path: 'forms',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../forms/forms.module'], (module: any) => resolve(module.FormsModule));
+        })
+    },
+    {
         path: '',
         loadChildren: () => new Promise((resolve) => {
             (require as any)(['../home/home.module'], (module: any) => resolve(module.HomeModule));
