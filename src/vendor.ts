@@ -14,3 +14,4 @@ import '@angular/router';
 
 // Bootstrap
 require('bootstrap/dist/css/bootstrap.css');
+require('./styles.styl');
