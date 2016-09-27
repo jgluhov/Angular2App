@@ -4,4 +4,6 @@ import {Component} from '@angular/core';
     templateUrl: './contacts.component.html'
 })
 
-export class ContactsComponent {}
+export class ContactsComponent {
+    username:string;
+}

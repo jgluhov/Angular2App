@@ -1,8 +1,18 @@
 <div class="page-header">
-    <h1>Forms Component</h1>
+    <h1>Contacts Component {{username}}</h1>
 </div>
 <div class="panel panel-default">
     <div class="panel-body">
-        <input type="text" ngModel="username">
+        <label for="username" class="sr-only"></label>
+        <input type="text"
+               id="username"
+               class="form-control input-lg"
+               #usernameRef="ngModel"
+               [(ngModel)]="username"
+               minlength="3"
+               required
+        >
+        <div *ngIf="usernameRef.errors?.required">This field is required</div>
+        <div *ngIf="usernameRef.errors?.minlength">This field must be longer than {{usernameRef.errors?.minlength.requiredLength}} characters. You only typed {{usernameRef.errors?.minlength.actualLength}}</div>
     </div>
 </div>
