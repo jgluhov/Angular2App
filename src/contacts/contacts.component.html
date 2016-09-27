@@ -6,19 +6,38 @@
         <form #formRef="ngForm" (ngSubmit)="onSubmit(formRef.value)">
             <fieldset ngModelGroup="user-credentials">
                 <div class="form-group">
-                    <label for="name">name:</label>
-                    <input type="search" ngModel name="name" id="name" class="form-control input-lg" placeholder="Username" required>
+                    <label for="name">Name:</label>
+                    <input type="search"
+                           id="name"
+                           name="name"
+                           class="form-control input-lg"
+                           placeholder="Username"
+                           required
+                           ngModel
+                    >
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" ngModel name="password" id="password" class="form-control input-lg" placeholder="Password" required>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           class="form-control input-lg"
+                           placeholder="Password"
+                           required
+                           ngModel
+                    >
                 </div>
             </fieldset>
             <fieldset ngModelGroup="user-location">
                 <div class="form-group">
                     <div class="radio" *ngFor="let location of locations">
                         <label [attr.for]="location">
-                            <input type="radio" [id]="location" name="radio-location" ngModel [value]="location">
+                            <input type="radio"
+                                   [id]="location"
+                                   name="radio-location"
+                                   [value]="location"
+                                   ngModel
+                            >
                             {{location}}
                         </label>
                     </div>
