@@ -1,13 +1,34 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild, AfterViewInit} from '@angular/core';
+import {NgForm} from '@angular/forms'
+
+import {Observable} from 'rxjs';
+import 'rxjs/add/observable/combineLatest'
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/share';
 
 @Component({
     templateUrl: './contacts.component.html'
 })
 
-export class ContactsComponent {
-    username:string;
+export class ContactsComponent implements AfterViewInit{
+    @ViewChild('formRef') form: NgForm;
+
+    name:string;
+    password:string;
+
+    locations: Array<String> = ['home', 'away'];
+    location: String = _.first(this.locations);
+
+    formStatus$: Observable<Object>;
 
     onSubmit(formValue: Object) {
         console.log(formValue);
+    }
+
+    ngAfterViewInit() {
+        this.formStatus$ = Observable.combineLatest(
+            this.form.statusChanges,
+            this.form.valueChanges, (status, value) => ({status, value})
+        );
     }
 }

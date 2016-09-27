@@ -4,25 +4,31 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <form #formRef="ngForm" (ngSubmit)="onSubmit(formRef.value)">
-            <div class="form-group">
-                <label for="username" class="sr-only"></label>
-                <input type="text"
-                       name="username"
-                       id="username"
-                       class="form-control input-lg"
-                       #usernameRef="ngModel"
-                       [(ngModel)]="username"
-                       minlength="3"
-                       required
-                >
-                <p class="help-block" *ngIf="usernameRef.errors?.required">This field is required</p>
-                <p class="help-block" *ngIf="usernameRef.errors?.minlength">This field must be longer than
-                    {{usernameRef.errors?.minlength.requiredLength}} characters. You only typed
-                    {{usernameRef.errors?.minlength.actualLength}}
-                </p>
-                {{formRef.value | json}}
-                {{formRef.valid | json}}
-            </div>
+            <fieldset ngModelGroup="user-credentials">
+                <div class="form-group">
+                    <label for="name">name:</label>
+                    <input type="search" ngModel name="name" id="name" class="form-control input-lg" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" ngModel name="password" id="password" class="form-control input-lg" placeholder="Password" required>
+                </div>
+            </fieldset>
+            <fieldset ngModelGroup="user-location">
+                <div class="form-group">
+                    <div class="radio" *ngFor="let location of locations">
+                        <label [attr.for]="location">
+                            <input type="radio" [id]="location" name="radio-location" ngModel [value]="location">
+                            {{location}}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <select [ngModel]="location" name="select-location" id="select-location" class="form-control">
+                        <option *ngFor="let location of locations" [value]="location">{{location}}</option>
+                    </select>
+                </div>
+            </fieldset>
             <div class="form-group">
                 <button type="submit" class="btn btn-default btn-lg">Submit</button>
             </div>
