@@ -15,6 +15,7 @@ module.exports = {
   resolve: {
     extensions: ['',  '.js', '.ts']
   },
+  watch: true,
   module: {
     loaders: [
       {
