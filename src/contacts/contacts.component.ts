@@ -6,4 +6,8 @@ import {Component} from '@angular/core';
 
 export class ContactsComponent {
     username:string;
+
+    onSubmit(formValue: Object) {
+        console.log(formValue);
+    }
 }
