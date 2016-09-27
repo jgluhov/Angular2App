@@ -13,7 +13,13 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['',  '.js', '.ts']
+    modulesDirectories: ['node_modules'],
+    extensions: ['',  '.js', '.ts', '.styl']
+  },
+  resolveLoader: {
+    modulesDirectories: ['node_modules'],
+    extensions: ['',  '.js', '.styl'],
+    moduleTemplates: ['*-loader', '*']
   },
   watch: true,
   module: {
@@ -37,6 +43,16 @@ module.exports = {
         test: /\.css$/,
         include: helpers.root('src', 'app'),
         loader: 'raw'
+      },
+      {
+        test: /\.styl$/,
+        include: helpers.root('src', 'app'),
+        loader: 'raw!stylus'
+      },
+      {
+        test: /\.styl$/,
+        exclude: helpers.root('src', 'app'),
+        loader: ExtractTextWebpackPlugin.extract('style', 'css?sourceMap!stylus')
       }
     ]
   },
