@@ -13,9 +13,6 @@ import 'rxjs/add/operator/share';
 export class ContactsComponent implements AfterViewInit{
     @ViewChild('formRef') form: NgForm;
 
-    name:string;
-    password:string;
-
     locations: Array<String> = ['home', 'away'];
     location: String = _.first(this.locations);
 
