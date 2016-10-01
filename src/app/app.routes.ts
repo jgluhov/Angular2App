@@ -1,4 +1,5 @@
 import {RouterModule, Routes} from "@angular/router";
+import {AuthGuard} from "./auth-guard.service";
 
 const routes: Routes = [
     {
@@ -17,6 +18,13 @@ const routes: Routes = [
         path: 'contacts',
         loadChildren: () => new Promise((resolve) => {
             (require as any)(['../contacts/contacts.module'], (module: any) => resolve(module.ContactsModule));
+        })
+    },
+    {
+        path: 'github',
+        canActivate: [AuthGuard],
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../github/github.module'], (module: any) => resolve(module.GitHubModule));
         })
     },
     {
