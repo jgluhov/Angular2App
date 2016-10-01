@@ -11,7 +11,6 @@ export class AuthService {
     redirectUrl: string;
 
     login() {
-        console.log('login')
         return Observable.of(true).delay(1000).subscribe((value: boolean) => this.isLoggedIn = value);
     }
 
