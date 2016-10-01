@@ -28,6 +28,12 @@ const routes: Routes = [
         })
     },
     {
+        path: 'login',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../login/login.module'], (module: any) => resolve(module.LoginModule));
+        })
+    },
+    {
         path: '',
         loadChildren: () => new Promise((resolve) => {
             (require as any)(['../home/home.module'], (module: any) => resolve(module.HomeModule));
