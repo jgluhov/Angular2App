@@ -4,5 +4,8 @@
     "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",
     "lodash": "registry:dt/lodash#4.14.0+20160919145112",
     "node": "registry:dt/node#6.0.0+20160915134512"
+  },
+  "dependencies": {
+    "js-sha256": "registry:npm/js-sha256#0.3.0+20160427051917"
   }
 }
