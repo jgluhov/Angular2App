@@ -4,7 +4,7 @@
   "description": "angular2",
   "main": "webpack.config.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --port 3000",
+    "start": "webpack-dev-server --inline --port 80",
     "test": "karma start",
     "build": "rimraf ./public && webpack --config ./config/webpack.prod.js --profile --bail",
     "postinstall": "typings install"

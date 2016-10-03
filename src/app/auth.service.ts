@@ -30,29 +30,27 @@ export class AuthService {
         params.set('client_id', 'c6af84231105fd56d3b1');
         params.set('scope', 'user');
         params.set('state', sha256('Angular2' + new Date().valueOf()));
-        params.set('redirect_uri', 'http://localhost:3000/login/secure');
+        params.set('redirect_uri', 'http://localhost/login/secure');
 
         window.location.replace(this.gitHubAccess + '?' + params.toString());
     }
 
     tokenHandler(queryParams$ : Observable<any>) {
-        const params = new URLSearchParams();
-        const headers = new Headers({ 'Accept': 'application/json' });
-        const options = new RequestOptions({headers: headers});
 
-        params.set('client_id', 'c6af84231105fd56d3b1');
-        params.set('client_secret', '75795fca8c222575140082360ddd02c4d007c51f');
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        const options = new RequestOptions({headers: headers});
+        const params: any = {
+            'client_id': 'c6af84231105fd56d3b1',
+            'client_secret': '75795fca8c222575140082360ddd02c4d007c51f'
+        };
 
         return queryParams$
             .map((queryParams: any) => {
-                params.set('code', queryParams.code);
-                params.set('state', queryParams.state);
+                params.code = queryParams.code;
+                params.state = queryParams.state;
             })
-            .switchMap(body => this.http.get(this.gitHubOAuth + '?' + params.toString(), options)
-            .map((res:Response) => res.json()))
-            .catch((error:any) => {
-                return Observable.throw(error.json().error || 'Server error')
-            });
+            .switchMap(body => this.http.post(this.gitHubOAuth, JSON.stringify(params), options)
+            .map((res:Response) => res.json()));
     }
 
     logout() {

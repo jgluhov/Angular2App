@@ -15,7 +15,7 @@ export class LoginSecureComponent implements OnInit, OnDestroy {
     subscription: Subscription;
     ngOnInit() {
         this.subscription = this.authService.tokenHandler(this.route.queryParams)
-            .subscribe(data => console.log(data), error => console.log(error));
+            .subscribe(data => console.log(data), error => console.error(error));
     }
     ngOnDestroy() {
         this.subscription
