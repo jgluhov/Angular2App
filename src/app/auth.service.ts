@@ -23,6 +23,7 @@ export class AuthService {
 
     gitHubAccess: string = 'https://github.com/login/oauth/authorize';
     gitHubOAuth: string = 'https://github.com/login/oauth/access_token';
+    localAccessToken: string = 'http://localhost:8000/access_token';
 
     login() {
         let params = new URLSearchParams();
@@ -49,7 +50,7 @@ export class AuthService {
                 params.code = queryParams.code;
                 params.state = queryParams.state;
             })
-            .switchMap(body => this.http.post(this.gitHubOAuth, JSON.stringify(params), options)
+            .switchMap(body => this.http.post(this.localAccessToken, JSON.stringify(params), options)
             .map((res:Response) => res.json()));
     }
 
