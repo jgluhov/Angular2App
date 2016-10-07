@@ -1,21 +1,20 @@
 import {Injectable} from '@angular/core';
-import {Http, Headers, Response, RequestOptions} from '@angular/http';
-import {AuthGitHub} from './auth.github';
+import {
+    Http, Headers,
+    URLSearchParams,
+    Response, RequestOptions
+} from '@angular/http';
 
-import 'rxjs/add/observable/of';
+import {AuthGitHub} from './auth-github.service';
+
+import {Observable} from "rxjs";
 import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/pluck';
 
-import {URLSearchParams} from "@angular/http";
-import {Observable} from "rxjs";
-
 @Injectable()
 export class AuthService {
-    redirectUrl: string;
     authenticated: boolean;
 
     constructor(private http: Http, private authGitHub: AuthGitHub) {
@@ -54,7 +53,7 @@ export class AuthService {
                 .map((res:Response) => res.json())
             )
             .pluck('access_token')
-            .map((jwt: string) => this.jwt = jwt)
+            .do((jwt: string) => this.jwt = jwt)
             .switchMap(() => {
                 headers.append('Authorization', `token ${this.jwt}`);
                 return this.http.get('https://api.github.com/user', {headers})
@@ -91,5 +90,13 @@ export class AuthService {
 
     get accessUrl() {
         return `http://${location.hostname}:8000/access_token`;
+    }
+
+    set redirectUrl(url: string) {
+        localStorage.setItem('redirectUrl', url);
+    }
+
+    get redirectUrl() {
+        return localStorage.getItem('redirectUrl');
     }
 }

@@ -5,7 +5,7 @@ import {AppComponent} from './app.component';
 import appRoutes from './app.routes';
 import {AuthGuard} from "../auth/auth-guard.service";
 import {AuthService} from "../auth/auth.service";
-import {AuthGitHub} from "../auth/auth.github";
+import {AuthGitHub} from "../auth/auth-github.service";
 
 @NgModule({
     imports: [BrowserModule, appRoutes, HttpModule],
