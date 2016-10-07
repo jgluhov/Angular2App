@@ -10,8 +10,9 @@ import '@angular/router';
 // import 'rxjs';
 
 // Lodash
-import 'lodash';
+// import 'lodash';
 
 // Bootstrap
 require('bootstrap/dist/css/bootstrap.css');
+require('font-awesome/css/font-awesome.css');
 require('./styles.styl');

@@ -1,5 +1,5 @@
 import {RouterModule, Routes} from "@angular/router";
-import {AuthGuard} from "./auth-guard.service";
+import {AuthGuard} from "../auth/auth-guard.service";
 
 const routes: Routes = [
     {
@@ -28,9 +28,9 @@ const routes: Routes = [
         })
     },
     {
-        path: 'login',
+        path: 'auth',
         loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../login/login.module'], (module: any) => resolve(module.LoginModule));
+            (require as any)(['../auth/auth.module'], (module: any) => resolve(module.AuthModule));
         })
     },
     {

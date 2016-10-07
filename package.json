@@ -4,7 +4,7 @@
   "description": "angular2",
   "main": "webpack.config.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --port 80",
+    "start": "webpack-dev-server --inline --port 3000",
     "test": "karma start",
     "build": "rimraf ./public && webpack --config ./config/webpack.prod.js --profile --bail",
     "postinstall": "typings install"
@@ -27,6 +27,7 @@
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "cors": "^2.8.1",
+    "font-awesome": "^4.6.3",
     "js-sha256": "^0.3.2",
     "lodash": "^4.16.1",
     "reflect-metadata": "^0.1.8",

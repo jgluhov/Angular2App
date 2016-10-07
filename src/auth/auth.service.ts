@@ -1,0 +1,95 @@
+import {Injectable} from '@angular/core';
+import {Http, Headers, Response, RequestOptions} from '@angular/http';
+import {AuthGitHub} from './auth.github';
+
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/pluck';
+
+import {URLSearchParams} from "@angular/http";
+import {Observable} from "rxjs";
+
+@Injectable()
+export class AuthService {
+    redirectUrl: string;
+    authenticated: boolean;
+
+    constructor(private http: Http, private authGitHub: AuthGitHub) {
+        if(this.jwt) {
+            this.authenticated = true;
+        }
+    }
+
+    signIn() {
+        let params = new URLSearchParams();
+
+        params.set('client_id', this.authGitHub.id);
+        params.set('scope', this.authGitHub.scope);
+        params.set('state', this.authGitHub.state);
+        params.set('redirect_uri', this.callbackUrl);
+
+        window.location.replace(this.authGitHub.authorizeUrl + '?' + params.toString());
+    }
+
+    jwtHandler(queryParams$ : Observable<Object>) {
+
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        const options = new RequestOptions({headers: headers});
+
+        const params: any = {
+            'client_id': this.authGitHub.id,
+            'client_secret': this.authGitHub.secret
+        };
+
+        return queryParams$
+            .map((queryParams: any) => {
+                params.code = queryParams.code;
+                params.state = queryParams.state;
+            })
+            .switchMap(() => this.http.post(this.accessUrl, JSON.stringify(params), options)
+                .map((res:Response) => res.json())
+            )
+            .pluck('access_token')
+            .map((jwt: string) => this.jwt = jwt)
+            .switchMap(() => {
+                headers.append('Authorization', `token ${this.jwt}`);
+                return this.http.get('https://api.github.com/user', {headers})
+                    .map((res: Response) => res.json());
+            })
+            .map(user => this.user = user)
+    }
+
+    signOut() {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('user');
+
+        this.authenticated = false;
+    }
+
+    get jwt() {
+        return localStorage.getItem('jwt');
+    }
+    set jwt(jwt: string) {
+        localStorage.setItem('jwt', jwt);
+    }
+
+    get user() {
+        return JSON.parse(localStorage.getItem('user'));
+    }
+
+    set user(user: Object) {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    get callbackUrl() {
+        return `${location.origin}/auth/secure`;
+    }
+
+    get accessUrl() {
+        return `http://${location.hostname}:8000/access_token`;
+    }
+}
