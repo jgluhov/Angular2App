@@ -56,7 +56,7 @@ export class AuthService {
             .do((jwt: string) => this.jwt = jwt)
             .switchMap(() => {
                 headers.append('Authorization', `token ${this.jwt}`);
-                return this.http.get('https://api.github.com/user', {headers})
+                return this.http.get(this.authGitHub.userUrl, {headers})
                     .map((res: Response) => res.json());
             })
             .map(user => this.user = user)
@@ -65,7 +65,7 @@ export class AuthService {
 
     signOut() {
         localStorage.removeItem('jwt');
-        localStorage.removeItem('user');
+        localStorage.removeItem('profile');
 
         this.authenticated = false;
     }
@@ -78,11 +78,11 @@ export class AuthService {
     }
 
     get user() {
-        return JSON.parse(localStorage.getItem('user'));
+        return JSON.parse(localStorage.getItem('profile'));
     }
 
     set user(user: Object) {
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('profile', JSON.stringify(user));
     }
 
     get callbackUrl() {

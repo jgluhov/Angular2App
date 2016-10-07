@@ -4,6 +4,7 @@ import {sha256} from 'js-sha256';
 @Injectable()
 export class AuthGitHub {
     authorizeUrl: string = 'https://github.com/login/oauth/authorize';
+    userUrl: string = 'https://api.github.com/user';
     scope = 'user';
 
     id: string = 'c6af84231105fd56d3b1';
