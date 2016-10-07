@@ -1,5 +1,6 @@
 import {RouterModule, Routes} from "@angular/router";
 import {AuthGuard} from "../auth/auth-guard.service";
+import {ProfileComponent} from "../profile/profile.component";
 
 const routes: Routes = [
     {
@@ -32,6 +33,10 @@ const routes: Routes = [
         loadChildren: () => new Promise((resolve) => {
             (require as any)(['../auth/auth.module'], (module: any) => resolve(module.AuthModule));
         })
+    },
+    {
+        path: 'profile',
+        component: ProfileComponent
     },
     {
         path: '',

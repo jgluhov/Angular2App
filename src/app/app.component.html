@@ -24,7 +24,10 @@
                     <a>{{nav.content}}</a>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <p class="navbar-text navbar-right" *ngIf="authService.authenticated">
+                Signed in as <a routerLink="/profile" class="navbar-link">{{authService.user.name}}</a>
+            </p>
+            <ul class="nav navbar-nav navbar-right" *ngIf="!authService.authenticated">
                 <button type="button" class="btn btn-default navbar-btn" (click)="onSignIn()">
                     <i class="fa fa-github fa-fw" aria-hidden="true"></i>&nbsp;Sign in
                 </button>

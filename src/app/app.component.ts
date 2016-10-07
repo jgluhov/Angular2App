@@ -16,7 +16,9 @@ export class AppComponent {
         {url: 'github', content: 'Github'}
     ];
 
-    constructor(private authService: AuthService , private router: Router) {}
+    constructor(private authService: AuthService , private router: Router) {
+        console.log('auth')
+    }
 
     onSignIn() {
         this.authService.redirectUrl = this.router.routerState.snapshot.url;

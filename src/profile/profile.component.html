@@ -1,0 +1,18 @@
+<div class="page-header"><h1>{{user.name}}</h1></div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="pull-left">User login: <strong>{{user.login}}</strong></div>
+        <div class="pull-right"><a (click)="onSignOut()"><i class="fa fa-sign-out" aria-hidden="true"></i></a></div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Email:</dt>
+            <dd>{{user.email}}</dd>
+            <dt>Repositories:</dt>
+            <dd>{{user.public_repos}}</dd>
+            <dt>Gists:</dt>
+            <dd>{{user.public_gists}}</dd>
+        </dl>
+    </div>
+</div>
