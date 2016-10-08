@@ -8,6 +8,7 @@ import 'rxjs/add/observable/interval';
 import 'rxjs/add/observable/generate';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/combineLatest';
+import 'rxjs/add/operator/sample';
 
 @Component({
     selector: 'spaceship-game',
@@ -19,6 +20,7 @@ export class SpaceshipGameComponent implements AfterViewInit {
     context: CanvasRenderingContext2D;
 
     STAR_NUMBER: number = 250;
+    ENEMY_FREQ: number = 1500;
     HERO_Y: number;
 
     @ViewChild("spaceshipArea") spaceshipArea: ElementRef;
@@ -35,10 +37,12 @@ export class SpaceshipGameComponent implements AfterViewInit {
     }
 
     get game$() {
-        return Observable.combineLatest(this.starStream$, this.spaceship$, (stars, spaceship) => {
-            return {
-                stars: stars, spaceship: spaceship
-            }
+        return Observable.combineLatest(
+            this.starStream$, this.spaceship$, this.enemies$,
+            (stars, spaceship, enemies) => {
+                return {
+                    stars: stars, spaceship: spaceship, enemies: enemies
+                }
         })
     }
 
@@ -46,14 +50,14 @@ export class SpaceshipGameComponent implements AfterViewInit {
         return Observable.range(1, this.STAR_NUMBER)
             .map(() => {
                 return {
-                    x: +(Math.random() * this.spaceshipArea.nativeElement.width),
-                    y: +(Math.random() * this.spaceshipArea.nativeElement.height),
-                    size: Math.random() * 2 + 1
+                    x: _.random(0, this.spaceshipArea.nativeElement.width),
+                    y: _.random(0, this.spaceshipArea.nativeElement.height),
+                    size: _.random(0, 3)
                 }
             })
             .toArray()
             .switchMap(starArray => {
-                return this.animation()
+                return SpaceshipGameComponent.animation()
                     .map(() => {
                         starArray.forEach(star => {
                             if(star.y >= this.spaceshipArea.nativeElement.height) {
@@ -64,8 +68,7 @@ export class SpaceshipGameComponent implements AfterViewInit {
 
                         return starArray;
                     });
-            })
-
+            });
     }
 
     get spaceship$() {
@@ -79,16 +82,28 @@ export class SpaceshipGameComponent implements AfterViewInit {
             .startWith({
                 x: this.spaceshipArea.nativeElement.width / 2,
                 y: this.HERO_Y
-            })
+            });
     }
 
-    animation() {
+    get enemies$() {
+        return Observable.interval(this.ENEMY_FREQ)
+            .scan((enemyArray: any) => {
+                enemyArray.push({
+                    x: _.random(0, this.spaceshipArea.nativeElement.width),
+                    y: - 30
+                });
+                return enemyArray;
+            }, []);
+    }
+
+    static animation() {
         return Observable.generate(0, (x) => true, (x) => x + 1, (x) => x, Scheduler.animationFrame);
     }
 
     renderScene(actors: any) {
         this.paintStars(actors.stars);
         this.paintSpaceship(actors.spaceship);
+        this.paintEnemies(actors.enemies);
     }
 
     paintStars(stars:any) {
@@ -101,6 +116,15 @@ export class SpaceshipGameComponent implements AfterViewInit {
 
     paintSpaceship(spaceship:any) {
         this.drawTriangle(spaceship.x, spaceship.y, 20, '#ff0000', 'up');
+    }
+
+    paintEnemies(enemies: Array<any>) {
+        enemies.forEach(enemy => {
+            enemy.x += _.random(-5, 5);
+            enemy.y += 1;
+
+            this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
+        })
     }
 
     drawTriangle(x:number, y:number, width:number, color:string, direction:string) {

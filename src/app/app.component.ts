@@ -17,9 +17,7 @@ export class AppComponent {
         {url: 'spaceship', content: 'Spaceship'}
     ];
 
-    constructor(private authService: AuthService , private router: Router) {
-        console.log('auth')
-    }
+    constructor(private authService: AuthService , private router: Router) {}
 
     onSignIn() {
         this.authService.redirectUrl = this.router.routerState.snapshot.url;
