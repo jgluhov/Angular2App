@@ -9,6 +9,9 @@ import '@angular/router';
 // RxJS
 // import 'rxjs';
 
+// Rx-DOM
+require('rx-dom/dist/rx.dom');
+
 // Lodash
 import 'lodash';
 
