@@ -4,4 +4,8 @@ import {Component} from "@angular/core";
     templateUrl: './spaceship.component.html'
 })
 
-export class SpaceshipComponent {}
+export class SpaceshipComponent {
+    constructor() {
+
+    }
+}
