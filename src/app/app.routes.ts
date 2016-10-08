@@ -35,6 +35,12 @@ const routes: Routes = [
         })
     },
     {
+        path: 'spaceship',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../spaceship/spaceship.module'], (module: any) => resolve(module.SpaceshipModule));
+        })
+    },
+    {
         path: 'profile',
         component: ProfileComponent
     },
