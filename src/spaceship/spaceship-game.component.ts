@@ -8,7 +8,23 @@ import 'rxjs/add/observable/interval';
 import 'rxjs/add/observable/generate';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/combineLatest';
-import 'rxjs/add/operator/sample';
+import 'rxjs/add/operator/sampleTime';
+import 'rxjs/add/operator/merge';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/distinctUntilChanged';
+import chain = require("lodash/chain");
+
+interface Star {
+    x: number,
+    y: number,
+    size: number
+}
+
+interface Enemy {
+    x: number,
+    y: number
+}
 
 @Component({
     selector: 'spaceship-game',
@@ -21,6 +37,7 @@ export class SpaceshipGameComponent implements AfterViewInit {
 
     STAR_NUMBER: number = 250;
     ENEMY_FREQ: number = 1500;
+    SHOOTING_SPEED = 15;
     HERO_Y: number;
 
     @ViewChild("spaceshipArea") spaceshipArea: ElementRef;
@@ -43,7 +60,7 @@ export class SpaceshipGameComponent implements AfterViewInit {
                 return {
                     stars: stars, spaceship: spaceship, enemies: enemies
                 }
-        })
+            });
     }
 
     get starStream$() {
@@ -56,11 +73,11 @@ export class SpaceshipGameComponent implements AfterViewInit {
                 }
             })
             .toArray()
-            .switchMap(starArray => {
+            .switchMap((starArray: Array<Star>) => {
                 return SpaceshipGameComponent.animation()
                     .map(() => {
-                        starArray.forEach(star => {
-                            if(star.y >= this.spaceshipArea.nativeElement.height) {
+                        _.forEach(starArray, (star: Star) => {
+                            if (_.gt(star.y, this.spaceshipArea.nativeElement.height)) {
                                 star.y = 0;
                             }
                             star.y += 0.1;
@@ -90,11 +107,42 @@ export class SpaceshipGameComponent implements AfterViewInit {
             .scan((enemyArray: any) => {
                 enemyArray.push({
                     x: _.random(0, this.spaceshipArea.nativeElement.width),
-                    y: - 30
+                    y: -30
                 });
                 return enemyArray;
             }, []);
     }
+
+    // get playerFiring$() {
+    //     return Observable.merge(
+    //         Observable.fromEvent(this.spaceshipArea.nativeElement, 'click'),
+    //         Observable.fromEvent(document, 'keydown')
+    //             .filter((e: KeyboardEvent) => e.keyCode === 32)
+    //     )
+    //         .startWith({})
+    //         .sampleTime(200)
+    //         .timestamp();
+    //
+    // }
+
+    // get heroShots$() {
+    //     return Observable.combineLatest(
+    //         this.playerFiring$, this.spaceship$,
+    //             (shotEvents, spaceship) => {
+    //                 return {
+    //                     timestamp: shotEvents.timestamp,
+    //                     x: spaceship.x
+    //                 }
+    //         })
+    //         .distinctUntilChanged((shot: any) => shot.timestamp)
+    //         .scan((shotArray: any, shot: any) => {
+    //             shotArray.push({
+    //                 x: shot.x,
+    //                 y: this.HERO_Y
+    //             });
+    //             return shotArray;
+    //         }, []);
+    // }
 
     static animation() {
         return Observable.generate(0, (x) => true, (x) => x + 1, (x) => x, Scheduler.animationFrame);
@@ -104,30 +152,41 @@ export class SpaceshipGameComponent implements AfterViewInit {
         this.paintStars(actors.stars);
         this.paintSpaceship(actors.spaceship);
         this.paintEnemies(actors.enemies);
+        // this.paintHeroShots(actors.heroShots);
     }
 
-    paintStars(stars:any) {
+    paintStars(stars: any) {
         this.context.fillStyle = '#000000';
         this.context.fillRect(0, 0, this.spaceshipArea.nativeElement.width, this.spaceshipArea.nativeElement.height);
         this.context.fillStyle = '#ffffff';
 
-        stars.forEach((star:any) => this.context.fillRect(star.x, star.y, star.size, star.size));
+        stars.forEach((star: any) => this.context.fillRect(star.x, star.y, star.size, star.size));
     }
 
-    paintSpaceship(spaceship:any) {
+    paintSpaceship(spaceship: any) {
         this.drawTriangle(spaceship.x, spaceship.y, 20, '#ff0000', 'up');
     }
 
     paintEnemies(enemies: Array<any>) {
-        enemies.forEach(enemy => {
-            enemy.x += _.random(-5, 5);
-            enemy.y += 1;
-
-            this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
-        })
+        _.chain(enemies)
+            .forEach((enemy: Enemy) => {
+                enemy.x += _.random(-5, 5);
+                enemy.y += 1;
+            })
+            .forEach((enemy: Enemy) => {
+                this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
+            })
+            .value();
     }
 
-    drawTriangle(x:number, y:number, width:number, color:string, direction:string) {
+    paintHeroShots(heroShots: Array<any>) {
+        heroShots.forEach(shot => {
+            shot.y -= this.SHOOTING_SPEED;
+            this.drawTriangle(shot.x, shot.y, 5, '#ffff00', 'up');
+        });
+    }
+
+    drawTriangle(x: number, y: number, width: number, color: string, direction: string) {
         this.context.fillStyle = color;
         this.context.beginPath();
         this.context.moveTo(x - width, y);
