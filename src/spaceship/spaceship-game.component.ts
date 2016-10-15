@@ -180,7 +180,7 @@ export class SpaceshipGameComponent implements AfterViewInit {
                 return shotArray;
             }, []);
     }
-
+    // TODO: NEED TO refactor
     animationHandler(actors: GameActors) {
         SpaceshipGameComponent.animation()
             .do(() => {
