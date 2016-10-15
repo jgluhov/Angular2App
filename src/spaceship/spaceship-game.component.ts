@@ -1,4 +1,15 @@
 import {Component, ViewChild, ElementRef, AfterViewInit} from "@angular/core";
+
+import {SpaceshipGameContextService} from "./spaceship-game-context.service";
+import {
+    GameActors,
+    Star,
+    Enemy,
+    Shot,
+    Spaceship,
+    ShotEvent
+} from "./spaceship-game.interface";
+
 import {Observable, Scheduler, BehaviorSubject} from "rxjs";
 import 'rxjs/add/observable/range';
 import 'rxjs/add/operator/map';
@@ -10,12 +21,7 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/sampleTime';
 import 'rxjs/add/operator/merge';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/mergeAll';
-import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/distinctUntilChanged';
-import {SpaceshipGameContextService} from "./spaceship-game-context.service";
-import {GameActors, Star, Enemy, Shot, Spaceship, ShotEvent} from "./spaceship-game.interface";
 
 
 @Component({
@@ -227,9 +233,9 @@ export class SpaceshipGameComponent implements AfterViewInit {
         });
     }
 
-    isVisible(object: Shot | Enemy): Boolean {
-        return object.x > -40 && object.x < this.spaceshipArea.nativeElement.width + 40 &&
-            object.y > -40 && object.y < this.spaceshipArea.nativeElement.height + 40;
+    isVisible(target: Shot | Enemy): Boolean {
+        return target.x > -40 && target.x < this.spaceshipArea.nativeElement.width + 40 &&
+            target.y > -40 && target.y < this.spaceshipArea.nativeElement.height + 40;
     }
 
     static collision(target1: Shot | Spaceship, target2: Enemy | Shot): Boolean {
