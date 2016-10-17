@@ -23,9 +23,9 @@ export class SpaceshipGameContextService {
 
     renderScene(actors: GameActors) {
         this.paintStars(actors.stars);
-        // this.paintSpaceship(actors.spaceship);
+        this.paintSpaceship(actors.spaceship);
+        this.paintEnemies(actors.enemies);
         // this.paintPlayerHeroShots(actors.playerHeroShots);
-        // this.paintEnemies(actors.enemies);
         // this.paintScore(actors.score);
     }
 
