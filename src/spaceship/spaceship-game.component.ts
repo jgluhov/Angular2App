@@ -66,11 +66,11 @@ export class SpaceshipGameComponent implements AfterViewInit {
             this.starStream$, this.spaceship$, this.enemies$, this.playerHeroShots$, this.score$,
             (stars, spaceship, enemies, playerHeroShots, score) => {
                 return {
-                    stars: stars,
-                    spaceship: spaceship,
-                    enemies: enemies,
-                    playerHeroShots: playerHeroShots,
-                    score: score
+                    stars: stars
+                    // spaceship: spaceship,
+                    // enemies: enemies,
+                    // playerHeroShots: playerHeroShots,
+                    // score: score
                 }
             })
             .takeWhile((actors: GameActors) => {
@@ -81,7 +81,7 @@ export class SpaceshipGameComponent implements AfterViewInit {
                 return !isGameOver;
             })
     }
-
+    // complete stream
     get starStream$() {
         return Observable.range(1, this.STAR_NUMBER)
             .map(() => {
@@ -96,12 +96,9 @@ export class SpaceshipGameComponent implements AfterViewInit {
                 return SpaceshipGameComponent.animation()
                     .map(() => {
                         _.forEach(starArray, (star: Star) => {
-                            if (_.gt(star.y, this.spaceshipArea.nativeElement.height)) {
-                                star.y = 0;
-                            }
-                            star.y += 0.1;
+                            _.gt(star.y, this.spaceshipArea.nativeElement.height) ?
+                                star.y = 0 : star.y += 0.1;
                         });
-
                         return starArray;
                     });
             });
