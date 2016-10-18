@@ -25,7 +25,7 @@ export class SpaceshipGameContextService {
         this.paintStars(actors.stars);
         this.paintSpaceship(actors.spaceship);
         this.paintEnemies(actors.enemies);
-        // this.paintPlayerHeroShots(actors.playerHeroShots);
+        this.paintPlayerShots(actors.playerShots);
         // this.paintScore(actors.score);
     }
 
@@ -53,7 +53,7 @@ export class SpaceshipGameContextService {
         })
     }
 
-    paintPlayerHeroShots(playerHeroShots: Array<Shot>) {
+    paintPlayerShots(playerHeroShots: Array<Shot>) {
         _.forEach(playerHeroShots, (shot: Shot) => {
             this.drawTriangle(shot.x, shot.y, 5, '#ffff00', 'up');
         })

@@ -31,6 +31,6 @@ export interface GameActors {
     stars: Array<Star>
     spaceship: Spaceship
     enemies: Array<Enemy>
-    playerHeroShots: Array<Shot>
+    playerShots: Array<Shot>
     score: number
 }
