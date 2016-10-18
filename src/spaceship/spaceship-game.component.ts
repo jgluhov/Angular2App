@@ -7,7 +7,7 @@ import {
     Enemy,
     Shot,
     Spaceship,
-    ShotEvent
+    ShotEvent, SpaceshipHealth, SpaceshipPosition
 } from "./spaceship-game.interface";
 
 import {Observable, Scheduler, BehaviorSubject, Subject} from "rxjs";
@@ -24,6 +24,7 @@ import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/publish';
 import 'rxjs/observable/from';
+import 'rxjs/add/operator/withLatestFrom';
 
 
 @Component({
@@ -34,8 +35,9 @@ import 'rxjs/observable/from';
 
 export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
-    scoreSubject: BehaviorSubject<number>;
+    scoreSubject$: BehaviorSubject<Object>;
     enemies$: Subject<Array<Enemy>>;
+    spaceship$: Subject<Spaceship>;
 
     STAR_NUMBER: number = 250;
     ENEMY_FREQ: number = 1500;
@@ -54,17 +56,20 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
+        this.HERO_Y = this.spaceshipArea.nativeElement.clientHeight - 30;
+
         this.enemies$ = new Subject<Array<Enemy>>();
         this.enemiesObservable$.subscribe(this.enemies$);
+
+        this.spaceship$ = new Subject<Spaceship>();
+        this.spaceshipObservable$.subscribe(this.spaceship$);
+
+        this.scoreSubject$ = new BehaviorSubject(0);
     }
 
     ngAfterViewInit() {
         this.spaceshipGameContextService.context = this.spaceshipArea.nativeElement.getContext('2d');
         this.spaceshipGameContextService.contextAreaRef = this.spaceshipArea;
-
-        this.HERO_Y = this.spaceshipArea.nativeElement.clientHeight - 30;
-
-        this.scoreSubject = new BehaviorSubject(0);
 
         this.game$.subscribe((actors: GameActors) => this.spaceshipGameContextService.renderScene(actors));
     }
@@ -73,16 +78,16 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
 
         return Observable.combineLatest(
-            this.starStream$, this.spaceship$, this.enemies$, this.playerShots$,
-            (stars, spaceship, enemies, playerShots) => {
+            this.starStream$, this.spaceship$, this.enemies$, this.playerShots$, this.score$,
+            (stars, spaceship, enemies, playerShots, score) => {
                 return {
                     stars: stars,
                     spaceship: spaceship,
                     enemies: enemies,
                     playerShots: playerShots,
-                    // score: score
+                    score: score
                 }
-            })
+            });
         // .takeWhile((actors: GameActors) => {
         //     const isGameOver = this.gameOver(actors.spaceship, actors.enemies);
         //     if(isGameOver) {
@@ -120,8 +125,9 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
     }
 
     // complete stream
-    get spaceship$() {
-        return Observable.fromEvent(this.spaceshipArea.nativeElement, 'mousemove')
+    get spaceshipObservable$() {
+
+        const positionObservable$ = Observable.fromEvent(this.spaceshipArea.nativeElement, 'mousemove')
             .map((event: MouseEvent) => {
                 return {
                     x: event.offsetX,
@@ -132,6 +138,48 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                 x: this.spaceshipArea.nativeElement.width / 2,
                 y: this.HERO_Y
             });
+
+        const healthObservable$ = Observable.of(100);
+
+        const spaceshipObservable$ = Observable.combineLatest(
+            healthObservable$, positionObservable$,
+            (health, position) => {
+               return {
+                   health: health,
+                   position: position
+               }
+            });
+
+
+
+        const spaceshipHandler = (spaceship: Spaceship, enemies: Array<Enemy>) => {
+            _.forEach(enemies, (enemy: Enemy) => {
+                const isTouched = (SpaceshipGameComponent.collisionSpaceship(spaceship, enemy));
+// TODO: Make it work
+                _.chain(enemy.shots)
+                    .filter((shot: Shot) => SpaceshipGameComponent.collisionSpaceship(spaceship, shot))
+                    .toArray()
+                    // .map((shots: Array<Shot>) => enemy.shots)
+                    .value();
+
+
+                // const isHit = _.some(enemy.shots, (enemyShot: Shot) => {
+                //
+                //     if(isEnemyHit) {
+                //         enemy.shots = _.filter(enemy.shots, (shot: Shot) => !_.isEqual(shot, enemyShot));
+                //         return isEnemyHit;
+                //     }
+                // });
+
+                // if(isTouched || isHit) {
+                //     console.log('dead')
+                // }
+            });
+
+            return spaceship;
+        };
+
+        return Observable.combineLatest(spaceshipObservable$, this.enemies$, spaceshipHandler);
     }
 
     // complete stream
@@ -144,12 +192,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                 target.y < this.spaceshipArea.nativeElement.height + this.ENEMY_SPACESHIP_WIDTH;
         };
 
-        const isAlive = (enemy: Enemy): boolean => {
-            if (enemy.isDead) {
-                console.log('isDead:', enemy.isDead);
-            }
-            return !(enemy.isDead && _.isEmpty(enemy.shots));
-        };
+        const isAlive = (enemy: Enemy): boolean => !(enemy.isDead && _.isEmpty(enemy.shots));
 
         const enemiesObservable$ = Observable.interval(this.ENEMY_FREQ)
             .scan((enemyArray: Array<Enemy>) => {
@@ -217,7 +260,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             (shotEvent: ShotEvent, spaceship: Spaceship) => {
                 return {
                     timestamp: shotEvent.timestamp,
-                    x: spaceship.x
+                    x: spaceship.position.x
                 }
             })
             .distinctUntilChanged(null, (shot: Shot) => shot.timestamp)
@@ -237,10 +280,10 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
                 _.forEach(shotArray, (shot: Shot) => {
                     _.forEach(enemyArray, (enemy: Enemy) => {
-                        const isDead = !enemy.isDead && SpaceshipGameComponent.collision(shot, enemy);
+                        const isDead = !enemy.isDead && SpaceshipGameComponent.collisionShot(shot, enemy);
 
                         if (isDead) {
-                            this.scoreSubject.next(this.SCORE_INCREASE);
+                            this.scoreSubject$.next(this.SCORE_INCREASE);
                             enemy.isDead = isDead;
                         }
                     });
@@ -252,29 +295,42 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             })
     }
 
+    // complete stream
     get score$() {
-        return this.scoreSubject.scan((previousScore: number, currentScore: number) => previousScore + currentScore, 0);
+        return this.scoreSubject$
+            .scan((previousScore: number, currentScore: number) => previousScore + currentScore, 0);
     }
 
     static animation() {
         return Observable.generate(0, (x) => true, (x) => x + 1, (x) => x, Scheduler.animationFrame);
     }
 
-    gameOver(ship: Spaceship, enemies: Array<Enemy>) {
-        return _.some(enemies, (enemy: Enemy) => {
+    gameOver(spaceship: Spaceship, enemies: Array<Enemy>) {
 
-            const touching = (SpaceshipGameComponent.collision(ship, enemy));
+        const collideHandler = (enemy: Enemy) => {
+            // const isTouched = (SpaceshipGameComponent.collisionSpaceship(spaceship, enemy));
 
-            const hitting = _.some(enemy.shots, (shot: Shot) => {
-                return SpaceshipGameComponent.collision(ship, shot);
-            });
+            // const isHit = _.some(enemy.shots, (shot: Shot) => SpaceshipGameComponent.collisionSpaceship(spaceship, shot));
 
-            return touching || hitting;
-        });
+            return true;
+        };
+
+        const healthHandler = () => {};
+
+        // const isCollided = _.some(enemies, collideHandler);
+        //
+        // if(isCollided) {
+        //
+        // }
     }
 
-    static collision(target1: Shot | Spaceship, target2: Enemy | Shot): Boolean {
-        return (target1.x > target2.x - 20 && target1.x < target2.x + 20) &&
-            (target1.y > target2.y - 20 && target1.y < target2.y + 20);
+    static collisionSpaceship(spaceship: Spaceship, target: Enemy | Shot) {
+        return (spaceship.position.x > target.x - 20 && spaceship.position.x < target.x + 20) &&
+            (spaceship.position.y > target.y - 20 && spaceship.position.y < target.y + 20);
+    }
+
+    static collisionShot(shot: Shot, enemy: Enemy): Boolean {
+        return (shot.x > enemy.x - 20 && shot.x < enemy.x + 20) &&
+            (shot.y > enemy.y - 20 && shot.y < enemy.y + 20);
     }
 }

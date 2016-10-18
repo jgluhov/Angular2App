@@ -26,7 +26,7 @@ export class SpaceshipGameContextService {
         this.paintSpaceship(actors.spaceship);
         this.paintEnemies(actors.enemies);
         this.paintPlayerShots(actors.playerShots);
-        // this.paintScore(actors.score);
+        this.paintScore(actors.score);
     }
 
     paintStars(stars: Array<Star>) {
@@ -38,7 +38,7 @@ export class SpaceshipGameContextService {
     }
 
     paintSpaceship(spaceship: Spaceship) {
-        this.drawTriangle(spaceship.x, spaceship.y, 20, '#ff0000', 'up');
+        this.drawTriangle(spaceship.position.x, spaceship.position.y, 20, '#ff0000', 'up');
     }
 
     paintEnemies(enemies: Array<Enemy>) {

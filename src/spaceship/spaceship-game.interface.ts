@@ -17,9 +17,19 @@ export interface Enemy {
     isDead: Boolean
 }
 
-export interface Spaceship {
+export interface SpaceshipPosition {
     x: number,
     y: number
+}
+
+export interface SpaceshipHealth {
+    health: number
+}
+
+export interface Spaceship {
+    health: number,
+    position: SpaceshipPosition,
+    isDead: boolean
 }
 
 export interface ShotEvent {
