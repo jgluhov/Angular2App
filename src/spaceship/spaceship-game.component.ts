@@ -1,4 +1,4 @@
-import {Component, ViewChild, ElementRef, AfterViewInit} from "@angular/core";
+import {Component, ViewChild, ElementRef, AfterViewInit, OnInit} from "@angular/core";
 
 import {SpaceshipGameContextService} from "./spaceship-game-context.service";
 import {
@@ -10,7 +10,7 @@ import {
     ShotEvent
 } from "./spaceship-game.interface";
 
-import {Observable, Scheduler, BehaviorSubject} from "rxjs";
+import {Observable, Scheduler, BehaviorSubject, Subject} from "rxjs";
 import 'rxjs/add/observable/range';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toArray';
@@ -22,6 +22,7 @@ import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/sampleTime';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/publish';
 import 'rxjs/observable/from';
 
 
@@ -31,12 +32,14 @@ import 'rxjs/observable/from';
     styleUrls: ['./spaceship-game.component.styl']
 })
 
-export class SpaceshipGameComponent implements AfterViewInit {
+export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
     scoreSubject: BehaviorSubject<number>;
+    enemies$: Subject<Array<Enemy>>;
 
     STAR_NUMBER: number = 250;
     ENEMY_FREQ: number = 1500;
+    ENEMY_COUNT: number = 1;
     ENEMY_SPACESHIP_WIDTH: number = 40;
     ENEMY_SHOOTING_FREQ: number = 750;
     SHOOTING_SPEED = 5;
@@ -50,6 +53,11 @@ export class SpaceshipGameComponent implements AfterViewInit {
     constructor(private spaceshipGameContextService: SpaceshipGameContextService) {
     }
 
+    ngOnInit() {
+        this.enemies$ = new Subject<Array<Enemy>>();
+        this.enemiesObservable$.subscribe(this.enemies$);
+    }
+
     ngAfterViewInit() {
         this.spaceshipGameContextService.context = this.spaceshipArea.nativeElement.getContext('2d');
         this.spaceshipGameContextService.contextAreaRef = this.spaceshipArea;
@@ -58,13 +66,12 @@ export class SpaceshipGameComponent implements AfterViewInit {
 
         this.scoreSubject = new BehaviorSubject(0);
 
-        this.game$.subscribe((actors: GameActors) => {
-            this.spaceshipGameContextService.renderScene(actors);
-            // this.animationHandler(actors);
-        });
+        this.game$.subscribe((actors: GameActors) => this.spaceshipGameContextService.renderScene(actors));
     }
 
     get game$() {
+
+
         return Observable.combineLatest(
             this.starStream$, this.spaceship$, this.enemies$, this.playerShots$,
             (stars, spaceship, enemies, playerShots) => {
@@ -127,7 +134,8 @@ export class SpaceshipGameComponent implements AfterViewInit {
             });
     }
 
-    get enemies$() {
+    // complete stream
+    get enemiesObservable$() {
 
         const isVisible = (target: Shot | Enemy): boolean => {
             return target.x > -this.ENEMY_SPACESHIP_WIDTH &&
@@ -136,11 +144,18 @@ export class SpaceshipGameComponent implements AfterViewInit {
                 target.y < this.spaceshipArea.nativeElement.height + this.ENEMY_SPACESHIP_WIDTH;
         };
 
+        const isAlive = (enemy: Enemy): boolean => {
+            if (enemy.isDead) {
+                console.log('isDead:', enemy.isDead);
+            }
+            return !(enemy.isDead && _.isEmpty(enemy.shots));
+        };
+
         const enemiesObservable$ = Observable.interval(this.ENEMY_FREQ)
             .scan((enemyArray: Array<Enemy>) => {
                 let enemy: Enemy = {
                     x: _.random(0, this.spaceshipArea.nativeElement.width),
-                    y: -30,
+                    y: 0,
                     shots: [],
                     isDead: false
                 };
@@ -156,18 +171,16 @@ export class SpaceshipGameComponent implements AfterViewInit {
                     });
 
                 enemyArray.push(enemy);
-                // enemyArray = _.filter(enemyArray, this.isVisible.bind(this));
-                // .filter((enemy: Enemy) => !(enemy.isDead && _.isEmpty(enemy.shots)));
 
                 return enemyArray;
             }, [])
             .map((enemyArray: Array<Enemy>) => _.filter(enemyArray, isVisible))
-            // .map((enemyArray: Array<Enemy>) => _.filter(enemyArray, isAlive));
+            .map((enemyArray: Array<Enemy>) => _.filter(enemyArray, isAlive));
 
         const enemiesAnimationHandler = (enemies: Array<Enemy>) => {
             _.forEach(enemies, (enemy: Enemy) => {
                 enemy.x += _.random(-5, 5);
-                enemy.y += 1;
+                enemy.y += 0.1;
 
                 _.forEach(enemy.shots, (shot: Shot) => {
                     shot.y += this.ENEMY_SHOOTING_SPEED;
@@ -180,9 +193,10 @@ export class SpaceshipGameComponent implements AfterViewInit {
         return Observable.combineLatest(
             enemiesObservable$, SpaceshipGameComponent.animation(),
             (enemies: Array<Enemy>) => enemiesAnimationHandler(enemies)
-        );
+        )
     }
 
+    // complete stream
     get playerShots$(): Observable<Array<Shot>> {
 
         const isVisible = (shot: Shot): boolean => {
@@ -190,13 +204,13 @@ export class SpaceshipGameComponent implements AfterViewInit {
         };
 
         const shotsEventObservable$ = Observable.merge(
-                Observable.fromEvent(this.spaceshipArea.nativeElement, 'click'),
-                Observable.fromEvent(document, 'keydown')
-                    .filter((e: KeyboardEvent) => e.keyCode === 32)
-            )
-                .startWith({})
-                .sampleTime(200)
-                .timestamp();
+            Observable.fromEvent(this.spaceshipArea.nativeElement, 'click'),
+            Observable.fromEvent(document, 'keydown')
+                .filter((e: KeyboardEvent) => e.keyCode === 32)
+        )
+            .startWith({})
+            .sampleTime(200)
+            .timestamp();
 
         const shotsObservable$ = Observable.combineLatest(
             shotsEventObservable$, this.spaceship$,
@@ -206,57 +220,36 @@ export class SpaceshipGameComponent implements AfterViewInit {
                     x: spaceship.x
                 }
             })
-            .distinctUntilChanged(null, (shot:Shot) => shot.timestamp)
+            .distinctUntilChanged(null, (shot: Shot) => shot.timestamp)
             .scan((shotArray: Array<Shot>, shot: Shot) => {
                 shotArray.push({
                     x: shot.x,
-                    y: this.HERO_Y - this.SPACE_HEIGHT
+                    y: this.HERO_Y
                 });
 
                 return shotArray;
-            }, [])
-            .map((shotArray: Array<Shot>) => _.filter(shotArray, isVisible));
+            }, []);
 
-        return Observable.combineLatest(shotsObservable$, SpaceshipGameComponent.animation(),
-            (shots: Array<Shot>) => {
-                _.forEach(shots, (shot: Shot) => {
-                    shot.y -= this.SHOOTING_SPEED;
-                });
+        return Observable.combineLatest(
+            shotsObservable$, this.enemies$, SpaceshipGameComponent.animation(),
+            (shotArray: Array<Shot>, enemyArray: Array<Enemy>) => {
+                shotArray = _.filter(shotArray, isVisible);
 
-                return shots;
-            })
-    }
-
-    // TODO: NEED TO refactor
-    animationHandler(actors: GameActors) {
-        SpaceshipGameComponent.animation()
-            .do(() => {
-                _.forEach(actors.playerShots, (shot: Shot) => {
-
-                    _.some(actors.enemies, (enemy: Enemy) => {
+                _.forEach(shotArray, (shot: Shot) => {
+                    _.forEach(enemyArray, (enemy: Enemy) => {
                         const isDead = !enemy.isDead && SpaceshipGameComponent.collision(shot, enemy);
 
                         if (isDead) {
                             this.scoreSubject.next(this.SCORE_INCREASE);
                             enemy.isDead = isDead;
-
-                            return isDead;
                         }
                     });
 
                     shot.y -= this.SHOOTING_SPEED;
                 });
 
-                // _.forEach(actors.enemies, (enemy: Enemy) => {
-                //     enemy.x += _.random(-0.5, 0.5);
-                //     enemy.y += 0.01;
-                //
-                //     _(enemy.shots).forEach((shot: Shot) => {
-                //         shot.y += this.ENEMY_SHOOTING_SPEED;
-                //     })
-                // });
+                return shotArray;
             })
-            .subscribe();
     }
 
     get score$() {

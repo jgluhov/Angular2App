@@ -53,8 +53,8 @@ export class SpaceshipGameContextService {
         })
     }
 
-    paintPlayerShots(playerHeroShots: Array<Shot>) {
-        _.forEach(playerHeroShots, (shot: Shot) => {
+    paintPlayerShots(playerShots: Array<Shot>) {
+        _.forEach(playerShots, (shot: Shot) => {
             this.drawTriangle(shot.x, shot.y, 5, '#ffff00', 'up');
         })
     }
