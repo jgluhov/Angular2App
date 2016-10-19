@@ -8,6 +8,7 @@ export interface Shot {
     x: number,
     y?: number,
     timestamp?: number
+    isActive: boolean
 }
 
 export interface Enemy {

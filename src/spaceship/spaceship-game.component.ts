@@ -7,7 +7,7 @@ import {
     Enemy,
     Shot,
     Spaceship,
-    ShotEvent, SpaceshipHealth, SpaceshipPosition
+    ShotEvent
 } from "./spaceship-game.interface";
 
 import {Observable, Scheduler, BehaviorSubject, Subject} from "rxjs";
@@ -150,30 +150,30 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                }
             });
 
+        const touchHandler = (spaceship:Spaceship, enemy: Enemy) => {
+            const isDead = !enemy.isDead && (SpaceshipGameComponent.collisionSpaceship(spaceship, enemy));
 
+            if(isDead) {
+                enemy.isDead = true;
+                this.scoreSubject$.next(this.SCORE_INCREASE);
+            }
+        };
+
+        const hitHandler = (spaceship: Spaceship, enemy: Enemy) => {
+            _.forEach(enemy.shots, (shot: Shot) => {
+                const isActive = shot.isActive && SpaceshipGameComponent.collisionSpaceship(spaceship, shot);
+
+                if(isActive) {
+                    console.log('active');
+                    shot.isActive = false;
+                }
+            });
+        };
 
         const spaceshipHandler = (spaceship: Spaceship, enemies: Array<Enemy>) => {
             _.forEach(enemies, (enemy: Enemy) => {
-                const isTouched = (SpaceshipGameComponent.collisionSpaceship(spaceship, enemy));
-// TODO: Make it work
-                _.chain(enemy.shots)
-                    .filter((shot: Shot) => SpaceshipGameComponent.collisionSpaceship(spaceship, shot))
-                    .toArray()
-                    // .map((shots: Array<Shot>) => enemy.shots)
-                    .value();
-
-
-                // const isHit = _.some(enemy.shots, (enemyShot: Shot) => {
-                //
-                //     if(isEnemyHit) {
-                //         enemy.shots = _.filter(enemy.shots, (shot: Shot) => !_.isEqual(shot, enemyShot));
-                //         return isEnemyHit;
-                //     }
-                // });
-
-                // if(isTouched || isHit) {
-                //     console.log('dead')
-                // }
+                touchHandler(spaceship, enemy);
+                hitHandler(spaceship, enemy);
             });
 
             return spaceship;
@@ -193,7 +193,8 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
         };
 
         const isAlive = (enemy: Enemy): boolean => !(enemy.isDead && _.isEmpty(enemy.shots));
-
+        const isActive = (shot: Shot): boolean => shot.isActive;
+        
         const enemiesObservable$ = Observable.interval(this.ENEMY_FREQ)
             .scan((enemyArray: Array<Enemy>) => {
                 let enemy: Enemy = {
@@ -207,10 +208,9 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                     .subscribe(() => {
                         enemy.shots.push({
                             x: enemy.x,
-                            y: enemy.y
+                            y: enemy.y,
+                            isActive: true
                         });
-
-                        enemy.shots = _.filter(enemy.shots, isVisible);
                     });
 
                 enemyArray.push(enemy);
@@ -225,9 +225,11 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                 enemy.x += _.random(-5, 5);
                 enemy.y += 0.1;
 
-                _.forEach(enemy.shots, (shot: Shot) => {
-                    shot.y += this.ENEMY_SHOOTING_SPEED;
-                })
+                enemy.shots = _.chain(enemy.shots)
+                    .filter(isActive)
+                    .filter(isVisible)
+                    .forEach((shot: Shot) => shot.y += this.ENEMY_SHOOTING_SPEED)
+                    .value();
             });
 
             return enemies;
@@ -260,14 +262,16 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             (shotEvent: ShotEvent, spaceship: Spaceship) => {
                 return {
                     timestamp: shotEvent.timestamp,
-                    x: spaceship.position.x
+                    x: spaceship.position.x,
+                    isActive: true
                 }
             })
             .distinctUntilChanged(null, (shot: Shot) => shot.timestamp)
             .scan((shotArray: Array<Shot>, shot: Shot) => {
                 shotArray.push({
                     x: shot.x,
-                    y: this.HERO_Y
+                    y: this.HERO_Y,
+                    isActive: true
                 });
 
                 return shotArray;

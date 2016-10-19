@@ -47,6 +47,9 @@ export class SpaceshipGameContextService {
                 this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
 
                 _(enemy.shots).forEach((shot: Shot) => {
+                    if(!shot.isActive) {
+                        console.log('inactive')
+                    }
                     this.drawTriangle(shot.x, shot.y, 5, '#00ffff', 'down');
                 })
             }
