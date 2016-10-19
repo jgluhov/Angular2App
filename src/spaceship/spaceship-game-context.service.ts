@@ -1,8 +1,8 @@
-import {Injectable, ElementRef} from "@angular/core";
+import {Injectable, ElementRef, OnDestroy} from "@angular/core";
 import {GameActors, Star, Spaceship, Enemy, Shot} from "./spaceship-game.interface";
 
 Injectable();
-export class SpaceshipGameContextService {
+export class SpaceshipGameContextService implements OnDestroy {
 
     ctx: CanvasRenderingContext2D;
     spaceshipArea: ElementRef;
@@ -76,5 +76,10 @@ export class SpaceshipGameContextService {
         this.ctx.lineTo(x + width, y);
         this.ctx.lineTo(x - width, y);
         this.ctx.fill();
+    }
+
+    ngOnDestroy() {
+        this.ctx = null;
+        this.spaceshipArea = null;
     }
 }
