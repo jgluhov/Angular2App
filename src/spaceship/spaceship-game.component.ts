@@ -164,7 +164,6 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                 const isActive = shot.isActive && SpaceshipGameComponent.collisionSpaceship(spaceship, shot);
 
                 if(isActive) {
-                    console.log('active');
                     shot.isActive = false;
                 }
             });
@@ -223,7 +222,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
         const enemiesAnimationHandler = (enemies: Array<Enemy>) => {
             _.forEach(enemies, (enemy: Enemy) => {
                 enemy.x += _.random(-5, 5);
-                enemy.y += 0.1;
+                enemy.y += 1;
 
                 enemy.shots = _.chain(enemy.shots)
                     .filter(isActive)
