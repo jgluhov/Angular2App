@@ -16,9 +16,10 @@ export class AuthSecureComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.subscription = this.authService.jwtHandler(this.route.queryParams)
-            .subscribe(() => {
-                this.router.navigate([this.authService.redirectUrl]);
-            });
+            .subscribe(
+                () => this.router.navigate([this.authService.redirectUrl]),
+                () => this.router.navigate(['/'])
+            );
               
     }
 

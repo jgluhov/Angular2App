@@ -60,7 +60,7 @@ export class AuthService {
                     .map((res: Response) => res.json());
             })
             .map(user => this.user = user)
-            .do(() => this.authenticated = true)
+            .do(() => this.authenticated = true);
     }
 
     signOut() {
