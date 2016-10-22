@@ -23,10 +23,6 @@ export interface SpaceshipPosition {
     y: number
 }
 
-export interface SpaceshipHealth {
-    health: number
-}
-
 export interface Spaceship {
     health: number,
     position: SpaceshipPosition,
@@ -44,4 +40,5 @@ export interface GameActors {
     enemies: Array<Enemy>
     playerShots: Array<Shot>
     score: number
+    health: number
 }

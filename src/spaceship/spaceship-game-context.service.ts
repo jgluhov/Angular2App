@@ -27,6 +27,7 @@ export class SpaceshipGameContextService implements OnDestroy {
         this.paintEnemies(actors.enemies);
         this.paintPlayerShots(actors.playerShots);
         this.paintScore(actors.score);
+        this.paintHealth(actors.health);
     }
 
     paintStars(stars: Array<Star>) {
@@ -42,18 +43,17 @@ export class SpaceshipGameContextService implements OnDestroy {
     }
 
     paintEnemies(enemies: Array<Enemy>) {
-        _.forEach(enemies, (enemy: Enemy) => {
-            if (!enemy.isDead) {
-                this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
+        _.chain(enemies)
+            .filter((enemy: Enemy) => !enemy.isDead)
+            .forEach((enemy: Enemy) => this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down'))
+            .value();
 
-                _(enemy.shots).forEach((shot: Shot) => {
-                    if(!shot.isActive) {
-                        console.log('inactive')
-                    }
-                    this.drawTriangle(shot.x, shot.y, 5, '#00ffff', 'down');
-                })
-            }
-        })
+        _.forEach(enemies, (enemy:Enemy) => {
+            _.chain(enemy.shots)
+                .filter((shot: Shot) => shot.isActive)
+                .forEach((shot: Shot) => this.drawTriangle(shot.x, shot.y, 5, '#00ffff', 'down'))
+                .value();
+        });
     }
 
     paintPlayerShots(playerShots: Array<Shot>) {
@@ -66,6 +66,12 @@ export class SpaceshipGameContextService implements OnDestroy {
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = 'bold 26px sans-serif';
         this.ctx.fillText('Score: ' + score, 40, 43);
+    }
+
+    paintHealth(health: number) {
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.font = 'bold 26px sans-serif';
+        this.ctx.fillText('Health: ' + health, 40, 73);
     }
 
     drawTriangle(x: number, y: number, width: number, color: string, direction: string) {
