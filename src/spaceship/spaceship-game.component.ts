@@ -10,7 +10,13 @@ import {
     ShotEvent
 } from "./spaceship-game.interface";
 
-import {Observable, Scheduler, BehaviorSubject, Subject} from "rxjs";
+import {
+    Observable,
+    Scheduler,
+    BehaviorSubject,
+    Subject
+} from "rxjs";
+
 import 'rxjs/add/observable/range';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toArray';
@@ -27,6 +33,7 @@ import 'rxjs/observable/from';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/withLatestFrom';
 
+const bulletAudioUrl = require('../../assets/audio/bullet.mp3');
 
 @Component({
     selector: 'spaceship-game',
@@ -40,7 +47,6 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
     healthSubject$: BehaviorSubject<number>;
     enemies$: Subject<Array<Enemy>>;
     spaceship$: Subject<Spaceship>;
-
     HERO_HEALTH: number = 100;
     STAR_NUMBER: number = 250;
     ENEMY_FREQ: number = 1500;
@@ -69,6 +75,18 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
         this.spaceship$ = new Subject<Spaceship>();
         this.spaceshipObservable$.subscribe(this.spaceship$);
+    }
+
+    static createAudioElement(): HTMLAudioElement {
+        const audioElement = document.createElement('audio');
+        const sourceElement = document.createElement('source');
+
+        sourceElement.src = bulletAudioUrl;
+        sourceElement.type = 'audio/mpeg; codecs="mp3"';
+
+        audioElement.appendChild(sourceElement);
+
+        return audioElement;
     }
 
     ngAfterViewInit() {
@@ -249,8 +267,24 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             .sampleTime(200)
             .timestamp();
 
+        const audioElementObservable$ = Observable.of(SpaceshipGameComponent.createAudioElement());
+
+        const shotsEventWithAudioObservable$ = Observable.combineLatest(shotsEventObservable$, audioElementObservable$,
+            (shotEvent: ShotEvent, audioElement: HTMLAudioElement) => {
+
+                if(audioElement.ended) {
+                    audioElement.play()
+                } else {
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                    audioElement.play()
+                }
+
+                return shotEvent;
+        });
+
         const shotsObservable$ = Observable.combineLatest(
-            shotsEventObservable$, this.spaceship$,
+            shotsEventWithAudioObservable$, this.spaceship$,
             (shotEvent: ShotEvent, spaceship: Spaceship) => {
                 return {
                     timestamp: shotEvent.timestamp,
@@ -299,6 +333,10 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
     get health$() {
         return this.healthSubject$
             .scan((currentHealth: number, decreaseValue: number) => currentHealth - decreaseValue, this.HERO_HEALTH);
+    }
+
+    heroShotPlayer() {
+         // TODO: Create player for shot and enemy dead events.
     }
 
     static animation() {

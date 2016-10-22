@@ -45,6 +45,10 @@ module.exports = {
         loader: 'raw'
       },
       {
+        test: /\.mp3$/,
+        loader: 'file'
+      },
+      {
         test: /\.styl$/,
         include: [
           helpers.root('src', 'app'),
