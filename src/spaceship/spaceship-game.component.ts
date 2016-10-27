@@ -45,6 +45,8 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
     scoreSubject$: BehaviorSubject<number>;
     healthSubject$: BehaviorSubject<number>;
+    firePlayerSubject$: Subject<ShotEvent>;
+    firePlayerElement: HTMLAudioElement;
     enemies$: Subject<Array<Enemy>>;
     spaceship$: Subject<Spaceship>;
     HERO_HEALTH: number = 100;
@@ -73,6 +75,9 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
         this.enemies$ = new Subject<Array<Enemy>>();
         this.enemiesObservable$.subscribe(this.enemies$);
 
+        this.firePlayerElement = SpaceshipGameComponent.createAudioElement();
+        this.firePlayerSubject$ = new Subject<ShotEvent>();
+
         this.spaceship$ = new Subject<Spaceship>();
         this.spaceshipObservable$.subscribe(this.spaceship$);
     }
@@ -100,7 +105,13 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
 
         return Observable.combineLatest(
-            this.starStream$, this.spaceship$, this.enemies$, this.playerShots$, this.score$, this.health$,
+            this.starStream$,
+            this.spaceship$,
+            this.enemies$,
+            this.playerShots$,
+            this.score$,
+            this.health$,
+            this.firePlayer$,
             (stars, spaceship, enemies, playerShots, score, health) => {
                 return {
                     stars: stars,
@@ -265,26 +276,11 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
         )
             .startWith({})
             .sampleTime(200)
-            .timestamp();
-
-        const audioElementObservable$ = Observable.of(SpaceshipGameComponent.createAudioElement());
-
-        const shotsEventWithAudioObservable$ = Observable.combineLatest(shotsEventObservable$, audioElementObservable$,
-            (shotEvent: ShotEvent, audioElement: HTMLAudioElement) => {
-
-                if(audioElement.ended) {
-                    audioElement.play()
-                } else {
-                    audioElement.pause();
-                    audioElement.currentTime = 0;
-                    audioElement.play()
-                }
-
-                return shotEvent;
-        });
+            .timestamp()
+            .do(() => this.firePlayerSubject$.next());
 
         const shotsObservable$ = Observable.combineLatest(
-            shotsEventWithAudioObservable$, this.spaceship$,
+            shotsEventObservable$, this.spaceship$,
             (shotEvent: ShotEvent, spaceship: Spaceship) => {
                 return {
                     timestamp: shotEvent.timestamp,
@@ -335,17 +331,22 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             .scan((currentHealth: number, decreaseValue: number) => currentHealth - decreaseValue, this.HERO_HEALTH);
     }
 
-    heroShotPlayer() {
-         // TODO: Create player for shot and enemy dead events.
+    get firePlayer$() {
+        const play = ((elem: HTMLAudioElement) => elem.play()).bind(this, this.firePlayerElement);
+        const stop = ((elem: HTMLAudioElement) => {
+            elem.pause();
+            elem.currentTime = 0;
+        }).bind(this, this.firePlayerElement);
+
+        const isPlayed = ((elem: HTMLAudioElement) => elem.ended).bind(this, this.firePlayerElement);
+
+        const fireHandler = () => isPlayed() ? play() : (() => { stop(); play(); })();
+
+        return this.firePlayerSubject$.do(() => fireHandler());
     }
 
     static animation() {
         return Observable.generate(0, (x) => true, (x) => x + 1, (x) => x, Scheduler.animationFrame);
-    }
-
-    gameOver(spaceship: Spaceship, enemies: Array<Enemy>) {
-
-
     }
 
     static collisionSpaceship(spaceship: Spaceship, target: Enemy | Shot) {
