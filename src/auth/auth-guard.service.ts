@@ -5,7 +5,7 @@ import {
     RouterStateSnapshot
 } from '@angular/router';
 
-import {AuthService} from "./auth.service";
+import {AuthService} from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     }
 
     checkLogin(url: string): boolean {
-        if(this.authService.authenticated) {
+        if (this.authService.authenticated) {
             return true;
         }
 

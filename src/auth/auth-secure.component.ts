@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AuthService} from "./auth.service";
+import {AuthService} from './auth.service';
 
 import {Subscription} from 'rxjs';
 import 'rxjs/add/operator/do';
@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
 
 export class AuthSecureComponent implements OnInit, OnDestroy {
     constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) {}
-    subscription: Subscription;
+    subscription : Subscription;
 
     ngOnInit() {
         this.subscription = this.authService.jwtHandler(this.route.queryParams)
@@ -20,7 +20,6 @@ export class AuthSecureComponent implements OnInit, OnDestroy {
                 () => this.router.navigate([this.authService.redirectUrl]),
                 () => this.router.navigate(['/'])
             );
-              
     }
 
     ngOnDestroy() {
