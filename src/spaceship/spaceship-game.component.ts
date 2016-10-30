@@ -47,7 +47,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
     healthSubject$: BehaviorSubject<number>;
     firePlayerSubject$: Subject<ShotEvent>;
     firePlayerElement: HTMLAudioElement;
-    gameOver$: Subject;
+    gameOver$: Subject<any>;
     enemies$: Subject<Array<Enemy>>;
     spaceship$: Subject<Spaceship>;
     HERO_HEALTH: number = 100;
