@@ -14,7 +14,7 @@
     "label-position": true,
     "label-undefined": true,
     "jsdoc-format": true,
-    "max-line-length": [true, 80],
+    "max-line-length": [true, 120],
     "member-ordering": [false,
       "public-before-private",
       "variables-before-functions"

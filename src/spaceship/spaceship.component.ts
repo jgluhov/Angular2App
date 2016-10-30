@@ -1,11 +1,7 @@
-import {Component} from "@angular/core";
+import {Component} from '@angular/core';
 
 @Component({
     templateUrl: './spaceship.component.html'
 })
 
-export class SpaceshipComponent {
-    constructor() {
-
-    }
-}
+export class SpaceshipComponent {}
