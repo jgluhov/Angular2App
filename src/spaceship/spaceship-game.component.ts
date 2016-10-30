@@ -1,4 +1,4 @@
-import {Component, ViewChild, ElementRef, AfterViewInit, OnInit} from "@angular/core";
+import {Component, ViewChild, ElementRef, AfterViewInit, OnInit, OnDestroy} from "@angular/core";
 
 import {SpaceshipGameContextService} from "./spaceship-game-context.service";
 import {
@@ -41,12 +41,13 @@ const bulletAudioUrl = require('../../assets/audio/bullet.mp3');
     styleUrls: ['./spaceship-game.component.styl']
 })
 
-export class SpaceshipGameComponent implements AfterViewInit, OnInit {
+export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy {
 
     scoreSubject$: BehaviorSubject<number>;
     healthSubject$: BehaviorSubject<number>;
     firePlayerSubject$: Subject<ShotEvent>;
     firePlayerElement: HTMLAudioElement;
+    gameOver$: Subject;
     enemies$: Subject<Array<Enemy>>;
     spaceship$: Subject<Spaceship>;
     HERO_HEALTH: number = 100;
@@ -63,12 +64,11 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
     @ViewChild("spaceshipArea") spaceshipArea: ElementRef;
 
-    constructor(private spaceshipGameContextService: SpaceshipGameContextService) {
-    }
+    constructor(private spaceshipGameContextService: SpaceshipGameContextService) {}
 
     ngOnInit() {
         this.HERO_Y = this.spaceshipArea.nativeElement.clientHeight - 30;
-
+        this.gameOver$ = new Subject<any>();
         this.scoreSubject$ = new BehaviorSubject(0);
         this.healthSubject$ = new BehaviorSubject(0);
 
@@ -80,6 +80,11 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
 
         this.spaceship$ = new Subject<Spaceship>();
         this.spaceshipObservable$.subscribe(this.spaceship$);
+    }
+
+    ngOnDestroy() {
+        this.gameOver$.next();
+        this.gameOver$.complete();
     }
 
     static createAudioElement(): HTMLAudioElement {
@@ -121,7 +126,8 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                     score: score,
                     health: health,
                 }
-            });
+            })
+            .takeUntil(this.gameOver$);
     }
 
     get starStream$() {
@@ -204,7 +210,8 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             return spaceship;
         };
 
-        return Observable.combineLatest(spaceshipObservable$, this.enemies$, spaceshipHandler);
+        return Observable.combineLatest(spaceshipObservable$, this.enemies$, spaceshipHandler)
+            .takeUntil(this.gameOver$);
     }
 
     get enemiesObservable$() {
@@ -229,6 +236,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
                 };
 
                 Observable.interval(this.ENEMY_SHOOTING_FREQ)
+                    .takeUntil(this.gameOver$)
                     .subscribe(() => {
                         if(!enemy.isDead) {
                             enemy.shots.push({
@@ -263,6 +271,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit {
             enemiesObservable$, SpaceshipGameComponent.animation(),
             (enemies: Array<Enemy>) => enemiesAnimationHandler(enemies)
         )
+            .takeUntil(this.gameOver$);
     }
 
     get playerShots$(): Observable<Array<Shot>> {

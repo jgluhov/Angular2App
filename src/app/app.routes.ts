@@ -45,6 +45,12 @@ const routes: Routes = [
         component: ProfileComponent
     },
     {
+        path: 'counter',
+        loadChildren: () => new Promise((resolve) => {
+            (require as any)(['../counter/counter.module'], (module: any) => resolve(module.CounterModule));
+        })
+    },
+    {
         path: '',
         loadChildren: () => new Promise((resolve) => {
             (require as any)(['../home/home.module'], (module: any) => resolve(module.HomeModule));
