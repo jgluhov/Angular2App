@@ -7,7 +7,7 @@ import {
 
 import {AuthGitHub} from './auth-github.service';
 
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
@@ -15,10 +15,10 @@ import 'rxjs/add/operator/pluck';
 
 @Injectable()
 export class AuthService {
-    authenticated: boolean;
+    authenticated : boolean;
 
     constructor(private http: Http, private authGitHub: AuthGitHub) {
-        if(this.jwt) {
+        if (this.jwt) {
             this.authenticated = true;
         }
     }
@@ -34,7 +34,7 @@ export class AuthService {
         window.location.replace(this.authGitHub.authorizeUrl + '?' + params.toString());
     }
 
-    jwtHandler(queryParams$ : Observable<Object>) {
+    jwtHandler(queryParams$: Observable<Object>) {
 
         const headers = new Headers({ 'Content-Type': 'application/json' });
         const options = new RequestOptions({headers: headers});
@@ -50,7 +50,7 @@ export class AuthService {
                 params.state = queryParams.state;
             })
             .switchMap(() => this.http.post(this.accessUrl, JSON.stringify(params), options)
-                .map((res:Response) => res.json())
+                .map((res: Response) => res.json())
             )
             .pluck('access_token')
             .do((jwt: string) => this.jwt = jwt)
