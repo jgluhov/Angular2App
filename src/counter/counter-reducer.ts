@@ -1,9 +1,9 @@
 import {Reducer, Action} from 'redux';
-import {AppState} from "../app/app-state";
+import {AppState} from '../app/app-state';
 import {
   INCREMENT,
   DECREMENT
-} from "./counter-action-creators";
+} from './counter-action-creators';
 
 let initialState: AppState = {
   counter: 0

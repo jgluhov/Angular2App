@@ -50,26 +50,26 @@ const bulletAudioUrl = require('../../assets/audio/bullet.mp3');
 
 export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy {
 
-  scoreSubject$ : BehaviorSubject<number>;
-  healthSubject$ : BehaviorSubject<number>;
-  firePlayerSubject$ : Subject<ShotEvent>;
-  firePlayerElement : HTMLAudioElement;
-  gameOver$ : Subject<any>;
-  enemies$ : Subject<Array<Enemy>>;
-  spaceship$ : Subject<Spaceship>;
-  HERO_HEALTH : number = 100;
-  STAR_NUMBER : number = 250;
-  ENEMY_FREQ : number = 1500;
-  ENEMY_SPACESHIP_WIDTH : number = 40;
-  ENEMY_SHOOTING_FREQ : number = 750;
+  scoreSubject$: BehaviorSubject<number>;
+  healthSubject$: BehaviorSubject<number>;
+  firePlayerSubject$: Subject<ShotEvent>;
+  firePlayerElement: HTMLAudioElement;
+  gameOver$: Subject<any>;
+  enemies$: Subject<Array<Enemy>>;
+  spaceship$: Subject<Spaceship>;
+  HERO_HEALTH: number = 100;
+  STAR_NUMBER: number = 250;
+  ENEMY_FREQ: number = 1500;
+  ENEMY_SPACESHIP_WIDTH: number = 40;
+  ENEMY_SHOOTING_FREQ: number = 750;
   SHOOTING_SPEED = 5;
   ENEMY_SHOOTING_SPEED = 5;
   SCORE_INCREASE = 10;
   HEALTH_DECREASE = 5;
   ENEMY_SPEED = 1;
-  HERO_Y : number;
+  HERO_Y: number;
 
-  @ViewChild('spaceshipArea') spaceshipArea : ElementRef;
+  @ViewChild('spaceshipArea') spaceshipArea: ElementRef;
 
   constructor(private spaceshipGameContextService: SpaceshipGameContextService) {
   }

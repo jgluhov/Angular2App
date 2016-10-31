@@ -1,6 +1,6 @@
-import {RouterModule, Routes} from "@angular/router";
-import {AuthGuard} from "../auth/auth-guard.service";
-import {ProfileComponent} from "../profile/profile.component";
+import {RouterModule, Routes} from '@angular/router';
+import {AuthGuard} from '../auth/auth-guard.service';
+import {ProfileComponent} from '../profile/profile.component';
 
 const routes: Routes = [
     {

@@ -11,12 +11,12 @@ import 'rxjs/add/operator/share';
 })
 
 export class ContactsComponent implements AfterViewInit {
-    @ViewChild('formRef') form : NgForm;
+    @ViewChild('formRef') form: NgForm;
 
-    locations : Array<String> = ['home', 'away'];
-    location : String = _.first(this.locations);
+    locations: Array<String> = ['home', 'away'];
+    location: String = _.first(this.locations);
 
-    formStatus$ : Observable<Object>;
+    formStatus$: Observable<Object>;
 
     static onSubmit(formValue: Object) {
         console.log(formValue);

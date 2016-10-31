@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
 
 export class AuthSecureComponent implements OnInit, OnDestroy {
     constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) {}
-    subscription : Subscription;
+    subscription: Subscription;
 
     ngOnInit() {
         this.subscription = this.authService.jwtHandler(this.route.queryParams)

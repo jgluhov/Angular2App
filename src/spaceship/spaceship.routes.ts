@@ -1,5 +1,5 @@
-import {Routes, RouterModule} from "@angular/router";
-import {SpaceshipComponent} from "./spaceship.component";
+import {Routes, RouterModule} from '@angular/router';
+import {SpaceshipComponent} from './spaceship.component';
 
 const routes: Routes = [
     {

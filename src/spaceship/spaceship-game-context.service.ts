@@ -1,5 +1,5 @@
-import {Injectable, ElementRef, OnDestroy} from "@angular/core";
-import {GameActors, Star, Spaceship, Enemy, Shot} from "./spaceship-game.interface";
+import {Injectable, ElementRef, OnDestroy} from '@angular/core';
+import {GameActors, Star, Spaceship, Enemy, Shot} from './spaceship-game.interface';
 
 Injectable();
 export class SpaceshipGameContextService implements OnDestroy {
@@ -48,7 +48,7 @@ export class SpaceshipGameContextService implements OnDestroy {
             .forEach((enemy: Enemy) => this.drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down'))
             .value();
 
-        _.forEach(enemies, (enemy:Enemy) => {
+        _.forEach(enemies, (enemy: Enemy) => {
             _.chain(enemy.shots)
                 .filter((shot: Shot) => shot.isActive)
                 .forEach((shot: Shot) => this.drawTriangle(shot.x, shot.y, 5, '#00ffff', 'down'))
@@ -59,7 +59,7 @@ export class SpaceshipGameContextService implements OnDestroy {
     paintPlayerShots(playerShots: Array<Shot>) {
         _.forEach(playerShots, (shot: Shot) => {
             this.drawTriangle(shot.x, shot.y, 5, '#ffff00', 'up');
-        })
+        });
     }
 
     paintScore(score: number) {

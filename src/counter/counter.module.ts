@@ -1,10 +1,10 @@
-import {NgModule} from "@angular/core";
-import counterRoutes from './counter.routes'
-import {CounterComponent} from "./counter.component";
+import {NgModule} from '@angular/core';
+import counterRoutes from './counter.routes';
+import {CounterComponent} from './counter.component';
 
 @NgModule({
-   imports: [counterRoutes],
-   declarations: [CounterComponent]
+  imports: [counterRoutes],
+  declarations: [CounterComponent]
 })
 
 export class CounterModule {}

@@ -15,7 +15,7 @@ import 'rxjs/add/operator/pluck';
 
 @Injectable()
 export class AuthService {
-    authenticated : boolean;
+    authenticated: boolean;
 
     constructor(private http: Http, private authGitHub: AuthGitHub) {
         if (this.jwt) {

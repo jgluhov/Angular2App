@@ -1,5 +1,5 @@
-import {RouterModule, Routes} from "@angular/router";
-import {WikipediaComponent} from "./wikipedia.component";
+import {RouterModule, Routes} from '@angular/router';
+import {WikipediaComponent} from './wikipedia.component';
 
 const routes: Routes = [
     {

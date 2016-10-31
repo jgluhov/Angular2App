@@ -1,4 +1,4 @@
-import {Component, Inject} from "@angular/core";
+import {Component, Inject} from '@angular/core';
 import {Store} from 'redux';
 import {AppState} from '../app/app-state';
 import {AppStore} from '../app/app-store';
