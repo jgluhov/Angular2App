@@ -3,59 +3,64 @@ import {AuthGuard} from '../auth/auth-guard.service';
 import {ProfileComponent} from '../profile/profile.component';
 
 const routes: Routes = [
-    {
-        path: 'posts',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../posts/posts.module'], (module: any) => resolve(module.PostsModule));
-        })
+  {
+    path: 'posts',
+    data: {
+      name: 'Posts'
     },
-    {
-        path: 'wikipedia',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../wikipedia/wikipedia.module'], (module: any) => resolve(module.WikipediaModule));
-        })
+    loadChildren: '../posts/posts.module#PostsModule'
+  },
+  {
+    path: 'wikipedia',
+    data: {
+      name: 'Wikipedia'
     },
-    {
-        path: 'contacts',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../contacts/contacts.module'], (module: any) => resolve(module.ContactsModule));
-        })
+    loadChildren: '../wikipedia/wikipedia.module#WikipediaModule'
+  },
+  {
+    path: 'contacts',
+    data: {
+      name: 'Contacts'
     },
-    {
-        path: 'github',
-        canActivate: [AuthGuard],
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../github/github.module'], (module: any) => resolve(module.GitHubModule));
-        })
+    loadChildren: '../contacts/contacts.module#ContactsModule'
+  },
+  {
+    path: 'github',
+    data: {
+      name: 'GitHub'
     },
-    {
-        path: 'auth',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../auth/auth.module'], (module: any) => resolve(module.AuthModule));
-        })
+    canActivate: [AuthGuard],
+    loadChildren: '../github/github.module#GitHubModule'
+  },
+  {
+    path: 'auth',
+    loadChildren: '../auth/auth.module#AuthModule'
+  },
+  {
+    path: 'spaceship',
+    data: {
+      name: 'Spaceship'
     },
-    {
-        path: 'spaceship',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../spaceship/spaceship.module'], (module: any) => resolve(module.SpaceshipModule));
-        })
+    loadChildren: '../spaceship/spaceship.module#SpaceshipModule'
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
+  {
+    path: 'counter',
+    data: {
+      name: 'Counter'
     },
-    {
-        path: 'profile',
-        component: ProfileComponent
+    loadChildren: '../counter/counter.module#CounterModule'
+  },
+  {
+    path: '',
+    data: {
+      name: 'Home'
     },
-    {
-        path: 'counter',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../counter/counter.module'], (module: any) => resolve(module.CounterModule));
-        })
-    },
-    {
-        path: '',
-        loadChildren: () => new Promise((resolve) => {
-            (require as any)(['../home/home.module'], (module: any) => resolve(module.HomeModule));
-        })
-    }
+    loadChildren: '../home/home.module#HomeModule'
+  }
 ];
 
 export default RouterModule.forRoot(routes);
