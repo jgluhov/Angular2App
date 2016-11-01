@@ -4,7 +4,8 @@ import {
   ElementRef,
   AfterViewInit,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  Renderer
 } from '@angular/core';
 
 import {SpaceshipGameContextService} from './spaceship-game-context.service';
@@ -71,28 +72,18 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
 
   @ViewChild('spaceshipArea') spaceshipArea: ElementRef;
 
-  constructor(private spaceshipGameContextService: SpaceshipGameContextService) {
-  }
+  constructor(
+    private spaceshipGameContextService: SpaceshipGameContextService,
+    private render: Renderer
+  ) {}
 
   ngOnInit() {
     this.HERO_Y = this.spaceshipArea.nativeElement.clientHeight - 30;
     this.gameOver$ = new Subject<any>();
-    this.scoreSubject$ = new BehaviorSubject(0);
-    this.healthSubject$ = new BehaviorSubject(0);
-
-    this.enemies$ = new Subject<Array<Enemy>>();
-    this.enemiesObservable$.subscribe(this.enemies$);
-
-    this.firePlayerElement = SpaceshipGameComponent.createAudioElement();
-    this.firePlayerSubject$ = new Subject<ShotEvent>();
-
-    this.spaceship$ = new Subject<Spaceship>();
-    this.spaceshipObservable$.subscribe(this.spaceship$);
   }
 
   ngOnDestroy() {
-    this.gameOver$.next();
-    this.gameOver$.complete();
+    this.stopGame();
   }
 
   static createAudioElement(): HTMLAudioElement {
@@ -110,13 +101,32 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
   ngAfterViewInit() {
     this.spaceshipGameContextService.context = this.spaceshipArea.nativeElement.getContext('2d');
     this.spaceshipGameContextService.contextAreaRef = this.spaceshipArea;
+    this.spaceshipGameContextService.renderWelcomeScreen();
+  }
 
+  startGame() {
+    this.scoreSubject$ = new BehaviorSubject(0);
+    this.healthSubject$ = new BehaviorSubject(0);
+
+    this.enemies$ = new Subject<Array<Enemy>>();
+    this.enemiesObservable$.subscribe(this.enemies$);
+
+    this.firePlayerElement = SpaceshipGameComponent.createAudioElement();
+    this.firePlayerSubject$ = new Subject<ShotEvent>();
+
+    this.spaceship$ = new Subject<Spaceship>();
+    this.spaceshipObservable$.subscribe(this.spaceship$);
+
+    this.render.setElementClass(this.spaceshipArea.nativeElement, 'active', true);
     this.game$.subscribe((actors: GameActors) => this.spaceshipGameContextService.renderScene(actors));
   }
 
+  stopGame() {
+    this.gameOver$.next();
+    this.gameOver$.complete();
+  }
+
   get game$() {
-
-
     return Observable.combineLatest(
       this.starStream$,
       this.spaceship$,

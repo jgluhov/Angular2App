@@ -30,6 +30,25 @@ export class SpaceshipGameContextService implements OnDestroy {
         this.paintHealth(actors.health);
     }
 
+    renderWelcomeScreen() {
+        this.ctx.fillStyle = '#000000';
+        this.ctx.fillRect(0, 0, this.spaceshipArea.nativeElement.width, this.spaceshipArea.nativeElement.height);
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(
+          this.spaceshipArea.nativeElement.width / 2 - 100,
+          this.spaceshipArea.nativeElement.height / 2 - 50,
+          200,
+          100
+        );
+        this.ctx.fillStyle = '#000000';
+        this.ctx.font = 'bold 30px sans-serif';
+        this.ctx.fillText(
+          'START',
+          this.spaceshipArea.nativeElement.width / 2 - 50,
+          this.spaceshipArea.nativeElement.height / 2 + 10
+        );
+    }
+
     paintStars(stars: Array<Star>) {
         this.ctx.fillStyle = '#000000';
         this.ctx.fillRect(0, 0, this.spaceshipArea.nativeElement.width, this.spaceshipArea.nativeElement.height);
