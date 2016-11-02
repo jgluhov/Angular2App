@@ -49,6 +49,16 @@ export class SpaceshipGameContextService implements OnDestroy {
         );
     }
 
+    onWelcomeScreen(e: MouseEvent) {
+        const x = e.offsetX;
+        const y = e.offsetY;
+
+        return x > this.spaceshipArea.nativeElement.width / 2 - 100 &&
+          x < this.spaceshipArea.nativeElement.width / 2 + 100 &&
+          y > this.spaceshipArea.nativeElement.height / 2 - 50 &&
+          y < this.spaceshipArea.nativeElement.height / 2 + 50;
+    };
+
     paintStars(stars: Array<Star>) {
         this.ctx.fillStyle = '#000000';
         this.ctx.fillRect(0, 0, this.spaceshipArea.nativeElement.width, this.spaceshipArea.nativeElement.height);

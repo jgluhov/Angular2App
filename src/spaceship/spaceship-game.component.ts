@@ -53,6 +53,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
 
   scoreSubject$: BehaviorSubject<number>;
   healthSubject$: BehaviorSubject<number>;
+  gameStatus$: BehaviorSubject<boolean>;
   firePlayerSubject$: Subject<ShotEvent>;
   firePlayerElement: HTMLAudioElement;
   gameOver$: Subject<any>;
@@ -70,21 +71,39 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
   ENEMY_SPEED = 1;
   HERO_Y: number;
 
-  @ViewChild('spaceshipArea') spaceshipArea: ElementRef;
-
   constructor(
     private spaceshipGameContextService: SpaceshipGameContextService,
-    private render: Renderer
+    private renderer: Renderer
   ) {}
+
+  @ViewChild('spaceshipArea') spaceshipArea: ElementRef;
+
+  onClick(e: MouseEvent) {
+    this.spaceshipGameContextService.onWelcomeScreen(e) ? this.startGame() : _.identity();
+  }
 
   ngOnInit() {
     this.HERO_Y = this.spaceshipArea.nativeElement.clientHeight - 30;
     this.gameOver$ = new Subject<any>();
+    this.gameStatus$ = new BehaviorSubject<boolean>(false);
+    this.cursorObservable$().subscribe();
   }
 
   ngOnDestroy() {
     this.stopGame();
   }
+
+  cursorObservable$() {
+    return Observable.fromEvent(this.spaceshipArea.nativeElement, 'mousemove')
+      .withLatestFrom(this.gameStatus$, (e: MouseEvent, status: boolean) => {
+        return status ? 'none' : this.spaceshipGameContextService.onWelcomeScreen(e) ? 'pointer' : 'auto';
+    })
+      .distinctUntilChanged()
+      .do((cursorValue: string) => {
+        this.renderer.setElementStyle(this.spaceshipArea.nativeElement, 'cursor', cursorValue);
+      })
+      .takeUntil(this.gameOver$);
+  };
 
   static createAudioElement(): HTMLAudioElement {
     const audioElement = document.createElement('audio');
@@ -117,7 +136,9 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
     this.spaceship$ = new Subject<Spaceship>();
     this.spaceshipObservable$.subscribe(this.spaceship$);
 
-    this.render.setElementClass(this.spaceshipArea.nativeElement, 'active', true);
+    this.renderer.setElementClass(this.spaceshipArea.nativeElement, 'active', true);
+    this.renderer.setElementStyle(this.spaceshipArea.nativeElement, 'cursor', 'none');
+    this.gameStatus$.next(true);
     this.game$.subscribe((actors: GameActors) => this.spaceshipGameContextService.renderScene(actors));
   }
 
