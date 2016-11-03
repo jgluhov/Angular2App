@@ -1,4 +1,12 @@
-import {Component, trigger, state, style, transition, animate} from '@angular/core';
+import {
+  Component,
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+  keyframes
+} from '@angular/core';
 
 @Component({
   animations: [
@@ -14,7 +22,15 @@ import {Component, trigger, state, style, transition, animate} from '@angular/co
         'background-color': 'red',
         'height': '50px'
       })),
-      transition('* => *', animate('.5s 1s ease-out'))
+      transition('void <=> *', animate(1000, keyframes([
+        style({'transform': 'scale(0)'}),
+        style({'transform': 'scale(.9)'}),
+        style({'transform': 'scale(.1)'}),
+        style({'transform': 'scale(.9)'}),
+        style({'transform': 'scale(.5)'}),
+        style({'transform': 'scale(1)'}),
+      ]))),
+      transition('go <=> stop', animate('.5s 1s ease-out'))
     ])
   ],
   templateUrl: './animation.component.html',
