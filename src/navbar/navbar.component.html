@@ -21,7 +21,7 @@
                     routerLinkActive="active"
                     [routerLinkActiveOptions]="{exact:true}"
                 >
-                    <a>{{nav.content}}</a>
+                    <a [@itemState]="isActiveRoute(nav.url)">{{nav.content}}</a>
                 </li>
             </ul>
             <p class="navbar-text navbar-right" *ngIf="authService.authenticated">
