@@ -54,19 +54,15 @@ module.exports = {
       },
       {
         test: /\.styl$/,
-        include: [
-          helpers.root('src', 'app'),
-          helpers.root('src', 'spaceship'),
-          helpers.root('src', 'animation')
+        exclude: [
+          helpers.root('src', 'styles'),
         ],
         loader: 'raw!stylus'
       },
       {
         test: /\.styl$/,
-        exclude: [
-          helpers.root('src', 'app'),
-          helpers.root('src', 'spaceship'),
-          helpers.root('src', 'animation')
+        include: [
+          helpers.root('src', 'styles'),
         ],
         loader: ExtractTextWebpackPlugin.extract('style', 'css?sourceMap!stylus')
       }
