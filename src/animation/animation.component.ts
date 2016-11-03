@@ -19,7 +19,7 @@ import {Component, trigger, state, style, transition, animate} from '@angular/co
 })
 
 export class AnimationComponent {
-  signal = 'stop';
+  signal: string;
 
   onGoClick() {
     this.signal = 'go';
