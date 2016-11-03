@@ -5,9 +5,9 @@ var helpers = require('./helpers');
 
 module.exports = {
   entry: {
-    polyfills: './src/polyfills.ts',
-    vendor: './src/vendor.ts',
-    app: './src/main.ts'
+    polyfills: './src/app/polyfills.ts',
+    vendor: './src/app/vendor.ts',
+    app: './src/app/main.ts'
   },
   output: {
     filename: '[name].js'
@@ -54,16 +54,12 @@ module.exports = {
       },
       {
         test: /\.styl$/,
-        exclude: [
-          helpers.root('src', 'styles'),
-        ],
+        exclude: helpers.root('src', 'app'),
         loader: 'raw!stylus'
       },
       {
         test: /\.styl$/,
-        include: [
-          helpers.root('src', 'styles'),
-        ],
+        include: helpers.root('src', 'app'),
         loader: ExtractTextWebpackPlugin.extract('style', 'css?sourceMap!stylus')
       }
     ]
