@@ -3,6 +3,9 @@ import {Component, trigger, state, style, transition, animate} from '@angular/co
 @Component({
   animations: [
     trigger('signal', [
+      state('void', style({
+        'transform': 'translateY(-100%)'
+      })),
       state('go', style({
         'background-color': 'green',
         'height': '100px'
@@ -11,7 +14,7 @@ import {Component, trigger, state, style, transition, animate} from '@angular/co
         'background-color': 'red',
         'height': '50px'
       })),
-      transition('* => *', animate(500))
+      transition('* => *', animate('.5s 1s ease-out'))
     ])
   ],
   templateUrl: './animation.component.html',
@@ -20,6 +23,7 @@ import {Component, trigger, state, style, transition, animate} from '@angular/co
 
 export class AnimationComponent {
   signal: string;
+  isVisible: boolean = false;
 
   onGoClick() {
     this.signal = 'go';
@@ -27,5 +31,9 @@ export class AnimationComponent {
 
   onStopClick() {
     this.signal = 'stop';
+  }
+
+  onToggleState() {
+    this.isVisible = !this.isVisible;
   }
 }
