@@ -13,9 +13,10 @@ export class AppComponent {
     {url: 'posts', content: 'Posts'},
     {url: 'wikipedia', content: 'Wikipedia'},
     {url: 'contacts', content: 'Contacts'},
-    {url: 'github', content: 'Github'},
+    {url: 'github', content: 'GitHub'},
     {url: 'spaceship', content: 'Spaceship'},
-    {url: 'counter', content: 'Counter'}
+    {url: 'counter', content: 'Counter'},
+    {url: 'animation', content: 'Animation'}
   ];
 
   constructor(private authService: AuthService, private router: Router) {

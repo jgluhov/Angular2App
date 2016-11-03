@@ -5,30 +5,18 @@ import {ProfileComponent} from '../profile/profile.component';
 const routes: Routes = [
   {
     path: 'posts',
-    data: {
-      name: 'Posts'
-    },
     loadChildren: '../posts/posts.module#PostsModule'
   },
   {
     path: 'wikipedia',
-    data: {
-      name: 'Wikipedia'
-    },
     loadChildren: '../wikipedia/wikipedia.module#WikipediaModule'
   },
   {
     path: 'contacts',
-    data: {
-      name: 'Contacts'
-    },
     loadChildren: '../contacts/contacts.module#ContactsModule'
   },
   {
     path: 'github',
-    data: {
-      name: 'GitHub'
-    },
     canActivate: [AuthGuard],
     loadChildren: '../github/github.module#GitHubModule'
   },
@@ -38,9 +26,6 @@ const routes: Routes = [
   },
   {
     path: 'spaceship',
-    data: {
-      name: 'Spaceship'
-    },
     loadChildren: '../spaceship/spaceship.module#SpaceshipModule'
   },
   {
@@ -49,16 +34,14 @@ const routes: Routes = [
   },
   {
     path: 'counter',
-    data: {
-      name: 'Counter'
-    },
     loadChildren: '../counter/counter.module#CounterModule'
   },
   {
+    path: 'animation',
+    loadChildren: '../animation/animation.module#AnimationModule'
+  },
+  {
     path: '',
-    data: {
-      name: 'Home'
-    },
     loadChildren: '../home/home.module#HomeModule'
   }
 ];
