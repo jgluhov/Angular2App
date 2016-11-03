@@ -1,40 +1,4 @@
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button"
-                    class="navbar-toggle collapsed"
-                    data-toggle="collapse"
-                    data-target="#navbar-collapse"
-                    aria-expanded="false"
-            >
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">Angular2App</a>
-        </div>
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li *ngFor="let nav of navs"
-                    [routerLink]="nav.url"
-                    routerLinkActive="active"
-                    [routerLinkActiveOptions]="{exact:true}"
-                >
-                    <a>{{nav.content}}</a>
-                </li>
-            </ul>
-            <p class="navbar-text navbar-right" *ngIf="authService.authenticated">
-                Signed in as <a routerLink="/profile" class="navbar-link">{{authService.user.name}}</a>
-            </p>
-            <ul class="nav navbar-nav navbar-right" *ngIf="!authService.authenticated">
-                <button type="button" class="btn btn-default navbar-btn" (click)="onSignIn()">
-                    <i class="fa fa-github fa-fw" aria-hidden="true"></i>&nbsp;Sign in
-                </button>
-            </ul>
-        </div>
-    </div>
-</nav>
+<navbar></navbar>
 <div class="container">
     <router-outlet></router-outlet>
 </div>
