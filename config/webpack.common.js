@@ -21,7 +21,6 @@ module.exports = {
     extensions: ['',  '.js', '.styl'],
     moduleTemplates: ['*-loader', '*']
   },
-  watch: true,
   module: {
     loaders: [
       {
@@ -36,7 +35,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico|svg)/,
-        loader: 'file?name=assets/[name].[hash].[ext]'
+        loader: 'file?name=assets/fonts/[name].[hash].[ext]'
       },
       {
         test: /\.css$/,
@@ -50,7 +49,7 @@ module.exports = {
       },
       {
         test: /\.mp3$/,
-        loader: 'file'
+        loader: 'file?name=assets/media/[name].[hash].[ext]'
       },
       {
         test: /\.styl$/,
