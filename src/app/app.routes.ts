@@ -33,6 +33,10 @@ const routes: Routes = [
     component: ProfileComponent
   },
   {
+    path: 'breakout',
+    loadChildren: '../breakout/breakout.module#BreakoutModule'
+  },
+  {
     path: 'counter',
     loadChildren: '../counter/counter.module#CounterModule'
   },

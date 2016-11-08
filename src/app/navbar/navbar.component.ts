@@ -7,7 +7,7 @@ import {
   animate
 } from '@angular/core';
 import {Router} from '@angular/router';
-import {AuthService} from '../auth/auth.service';
+import {AuthService} from '../../auth/auth.service';
 
 @Component({
   selector: 'navbar',
@@ -40,7 +40,8 @@ export class NavbarComponent {
     {url: 'github', content: 'GitHub'},
     {url: 'spaceship', content: 'Spaceship'},
     {url: 'counter', content: 'Counter'},
-    {url: 'animation', content: 'Animation'}
+    {url: 'animation', content: 'Animation'},
+    {url: 'breakout', content: 'Breakout'}
   ];
 
   constructor(private authService: AuthService, private router: Router) {
