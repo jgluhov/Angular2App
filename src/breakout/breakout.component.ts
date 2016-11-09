@@ -2,8 +2,7 @@ import {
   Component,
   ViewChild,
   ElementRef,
-  AfterViewInit,
-  OnInit
+  AfterViewInit
 } from '@angular/core';
 
 import {
@@ -23,7 +22,7 @@ import 'rxjs/add/operator/scan';
   styleUrls: ['./breakout.component.styl']
 })
 
-export class BreakoutComponent implements AfterViewInit, OnInit {
+export class BreakoutComponent implements AfterViewInit {
   context: CanvasRenderingContext2D;
   PADDLE_SPEED = 240;
   TICKER_INTERVAL = 17;
@@ -33,8 +32,17 @@ export class BreakoutComponent implements AfterViewInit, OnInit {
   @ViewChild('breakoutArea') breakoutArea: ElementRef;
 
   ngAfterViewInit() {
+    this.breakoutArea.nativeElement.width = this.breakoutArea.nativeElement.clientWidth;
+    this.breakoutArea.nativeElement.height = this.breakoutArea.nativeElement.clientHeight;
+
     this.context = this.breakoutArea.nativeElement.getContext('2d');
+
     this.context.fillStyle = 'pink';
+
+    // this.paddle$.subscribe(x => console.log(x));
+    // this.ticker$.subscribe(x => console.log(x));
+    // this.input$.subscribe(x => console.log(x));
+    this.paddle$.subscribe(x => console.log(x));
   }
 
   get ticker$() {
@@ -49,11 +57,6 @@ export class BreakoutComponent implements AfterViewInit, OnInit {
           delta: (current.time - previous.time) / 1000
         })
       );
-  }
-
-  ngOnInit() {
-    this.input$.subscribe(x => console.log(x));
-    this.ticker$.subscribe(x => console.log(x));
   }
 
   get input$() {
@@ -81,6 +84,7 @@ export class BreakoutComponent implements AfterViewInit, OnInit {
 
     return Observable.merge(keydown$, keyup$)
       .distinctUntilChanged();
+
   }
 
   get paddle$() {
@@ -88,6 +92,7 @@ export class BreakoutComponent implements AfterViewInit, OnInit {
       .scan(
         (position, [ticker, direction]) => {
           const next = position + direction * ticker.delta * this.PADDLE_SPEED;
+
           return Math.max(
             Math.min(next, this.breakoutArea.nativeElement.width - this.PADDLE_WIDTH / 2),
             this.PADDLE_WIDTH / 2
