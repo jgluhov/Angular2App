@@ -7,14 +7,17 @@ import {
 
 import {
   Observable,
-  Scheduler
+  Scheduler,
+  Subject
 } from 'rxjs';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/mapTo';
+import 'rxjs/add/operator/combineLatest';
+import 'rxjs/add/operator/sampleTime';
 import 'rxjs/add/operator/scan';
+import 'rxjs/add/operator/takeUntil';
 
 type TICK = {
   time: number,
@@ -47,13 +50,7 @@ type BALL = {
   direction: BALL_DIRECTION
 }
 
-type COLLISIONS = {
-  paddle: boolean,
-  floor: boolean,
-  wall: boolean,
-  ceiling: boolean,
-  brick: boolean
-};
+type SCORE = number;
 
 @Component({
   templateUrl: './breakout.component.html',
@@ -62,8 +59,10 @@ type COLLISIONS = {
 
 export class BreakoutComponent implements AfterViewInit {
   context: CanvasRenderingContext2D;
+  beeper$: Subject<any>;
+  gameOver$: Subject<any>;
   PADDLE_SPEED = 240;
-  TICKER_INTERVAL = 17;
+
   PADDLE_WIDTH = 100;
   PADDLE_HEIGHT = 20;
   BALL_SPEED = 60;
@@ -85,20 +84,21 @@ export class BreakoutComponent implements AfterViewInit {
 
     this.context.fillStyle = 'pink';
 
-    // this.paddle$.subscribe(x => console.log(x));
-    // this.ticker$.subscribe(x => console.log(x));
-    // this.input$.subscribe(x => console.log(x));
     this.drawTitle();
     this.drawControls();
     this.drawAuthor();
-    this.objects$.subscribe(x => console.log(x));
+
+    this.gameOver$ = new Subject<any>();
+
+    this.beeper$ = this.initAudio();
+    this.game$.subscribe(this.update.bind(this));
   }
 
   get ticker$(): Observable<TICK> {
 
     const tick = () => ({time: Date.now(), delta: 0});
 
-    return Observable.interval(this.TICKER_INTERVAL, (Scheduler as any).requestAnimationFrame)
+    return Observable.generate(0, (x) => true, (x) => x + 1, (x) => x, Scheduler.animationFrame)
       .map(tick)
       .scan(
         (previous: TICK, current: TICK) => ({
@@ -170,6 +170,26 @@ export class BreakoutComponent implements AfterViewInit {
     return bricks;
   }
 
+  initAudio() {
+    const beeper$ = new Subject<any>();
+    const audio = new (window['AudioContext'] || window['webkitAudioContext'])();
+    const oscillator = audio.createOscillator();
+
+    oscillator.connect(audio.destination);
+    oscillator.type = 'square';
+
+    beeper$.sampleTime(100)
+      .do((key: number) => {
+        oscillator.frequency.value = Math.pow(2, (key - 49) / 12) * 440;
+
+        oscillator.start();
+        oscillator.stop(audio.currentTime + 0.100);
+      })
+      .takeUntil(this.gameOver$);
+
+    return beeper$;
+  }
+
   collision(brick: BRICK, ball: BALL): boolean {
     return ball.position.x + ball.direction.x > brick.x - brick.width / 2
       && ball.position.x + ball.direction.x < brick.x + brick.width / 2
@@ -210,8 +230,8 @@ export class BreakoutComponent implements AfterViewInit {
     return this.ticker$.withLatestFrom(this.paddle$)
       .scan(
         ({ball, bricks, collisions, score}, [ticker, paddle]) => {
-          console.log(ball, bricks, collisions, score, ticker, paddle);
-          let survivors: BRICK[] = [];
+
+          const survivors: BRICK[] = [];
 
           collisions = {
             paddle: false,
@@ -235,10 +255,47 @@ export class BreakoutComponent implements AfterViewInit {
 
           collisions.paddle = this.hit(paddle, ball);
 
-          return initialObjects;
+          if (ball.position.x < this.BALL_RADIUS ||
+            ball.position.x > this.breakoutArea.nativeElement.width - this.BALL_RADIUS) {
+            ball.direction.x = -ball.direction.x;
+            collisions.wall = true;
+          }
+
+          collisions.ceiling = ball.position.y < this.BALL_RADIUS;
+
+          if (collisions.brick || collisions.paddle || collisions.ceiling) {
+            ball.direction.y = -ball.direction.y;
+          }
+
+          return {
+            ball: ball,
+            bricks: survivors,
+            collisions: collisions,
+            score: score
+          };
         },
         initialObjects
       );
+  }
+
+  update([ticker, paddle, objects]) {
+    this.context.clearRect(0, 0, this.breakoutArea.nativeElement.width, this.breakoutArea.nativeElement.height);
+
+    this.drawPaddle(paddle);
+    this.drawBall(objects.ball);
+    this.drawBricks(objects.bricks);
+    this.drawScore(objects.score);
+
+    if (objects.ball.position.y > this.breakoutArea.nativeElement.height - this.BALL_RADIUS) {
+      this.beeper$.next(28);
+      // drawGameOver('GAME OVER');
+
+    }
+  }
+
+  get game$() {
+    return Observable.combineLatest(this.ticker$, this.paddle$, this.objects$)
+      .takeUntil(this.gameOver$);
   }
 
   drawTitle() {
@@ -269,5 +326,46 @@ export class BreakoutComponent implements AfterViewInit {
       this.breakoutArea.nativeElement.width / 2,
       this.breakoutArea.nativeElement.height / 2 + 24
     );
+  }
+
+  drawPaddle(position: PADDLE_POSITION) {
+    this.context.beginPath();
+    this.context.rect(
+      position - this.PADDLE_WIDTH / 2,
+      this.context.canvas.height - this.PADDLE_HEIGHT,
+      this.PADDLE_WIDTH,
+      this.PADDLE_HEIGHT
+    );
+    this.context.fill();
+    this.context.closePath();
+  }
+
+  drawBall(ball: BALL) {
+    this.context.beginPath();
+    this.context.arc(ball.position.x, ball.position.y, this.BALL_RADIUS, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.closePath();
+  }
+
+  drawBricks(bricks: BRICK[]) {
+    bricks.forEach((brick: BRICK) => this.drawBrick(brick));
+  }
+
+  drawBrick(brick: BRICK) {
+    this.context.beginPath();
+    this.context.rect(
+      brick.x - brick.width / 2,
+      brick.y - brick.height / 2,
+      brick.width,
+      brick.height
+    );
+    this.context.fill();
+    this.context.closePath();
+  }
+
+  drawScore(score: SCORE) {
+    this.context.textAlign = 'left';
+    this.context.font = '16px Courier New';
+    this.context.fillText(score.toString(), this.BRICK_GAP, 16);
   }
 }
