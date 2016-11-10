@@ -196,7 +196,7 @@ export class BreakoutComponent implements AfterViewInit, OnDestroy {
         });
   }
 
-  collision(brick: BRICK, ball: BALL): boolean {
+  static collision(brick: BRICK, ball: BALL): boolean {
     return ball.position.x + ball.direction.x > brick.x - brick.width / 2
       && ball.position.x + ball.direction.x < brick.x + brick.width / 2
       && ball.position.y + ball.direction.y > brick.y - brick.height / 2
@@ -251,7 +251,7 @@ export class BreakoutComponent implements AfterViewInit, OnDestroy {
           ball.position.y = ball.position.y + ball.direction.y * ticker.delta * this.BALL_SPEED;
 
           bricks.forEach((brick: BRICK) => {
-            if (!this.collision(brick, ball)) {
+            if (!BreakoutComponent.collision(brick, ball)) {
               survivors.push(brick);
             } else {
               collisions.brick = true;
