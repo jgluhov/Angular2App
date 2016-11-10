@@ -87,11 +87,7 @@ export class BreakoutComponent implements AfterViewInit, OnDestroy {
 
     this.context = this.breakoutArea.nativeElement.getContext('2d');
 
-    this.context.fillStyle = 'pink';
-
-    this.drawTitle();
-    this.drawControls();
-    this.drawAuthor();
+    this.drawWelcomeScreen();
 
     this.beeper$ = new Subject<number>();
     this.audioContext = new AudioContext();
@@ -328,6 +324,16 @@ export class BreakoutComponent implements AfterViewInit, OnDestroy {
 
   dispose() {
     this.gameSub.unsubscribe();
+  }
+
+  drawWelcomeScreen() {
+    this.context.clearRect(0, 0, this.breakoutArea.nativeElement.width, this.breakoutArea.nativeElement.height);
+
+    this.context.fillStyle = 'pink';
+
+    this.drawTitle();
+    this.drawControls();
+    this.drawAuthor();
   }
 
   drawTitle() {
