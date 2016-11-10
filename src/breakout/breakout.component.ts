@@ -2,13 +2,13 @@ import {
   Component,
   ViewChild,
   ElementRef,
-  AfterViewInit
+  AfterViewInit, OnDestroy
 } from '@angular/core';
 
 import {
   Observable,
   Scheduler,
-  Subject
+  Subject, Subscription
 } from 'rxjs';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/merge';
@@ -18,11 +18,12 @@ import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/sampleTime';
 import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/do';
 
 type TICK = {
   time: number,
   delta: number
-}
+};
 
 type PADDLE_DIRECTION = number;
 
@@ -57,10 +58,14 @@ type SCORE = number;
   styleUrls: ['./breakout.component.styl']
 })
 
-export class BreakoutComponent implements AfterViewInit {
+export class BreakoutComponent implements AfterViewInit, OnDestroy {
   context: CanvasRenderingContext2D;
-  beeper$: Subject<any>;
-  gameOver$: Subject<any>;
+  beeper$: Subject<number>;
+  audioContext: any;
+
+  beeperSub: Subscription;
+  gameSub: Subscription;
+
   PADDLE_SPEED = 240;
 
   PADDLE_WIDTH = 100;
@@ -88,10 +93,18 @@ export class BreakoutComponent implements AfterViewInit {
     this.drawControls();
     this.drawAuthor();
 
-    this.gameOver$ = new Subject<any>();
+    this.beeper$ = new Subject<number>();
+    this.audioContext = new AudioContext();
 
-    this.beeper$ = this.initAudio();
-    this.game$.subscribe(this.update.bind(this));
+    this.beeperSub = this.initAudio(this.beeper$);
+
+    this.gameSub = this.game$.subscribe(this.update.bind(this));
+  }
+
+  ngOnDestroy() {
+    this.audioContext.close();
+    this.beeperSub.unsubscribe();
+    this.gameSub.unsubscribe();
   }
 
   get ticker$(): Observable<TICK> {
@@ -170,24 +183,21 @@ export class BreakoutComponent implements AfterViewInit {
     return bricks;
   }
 
-  initAudio() {
-    const beeper$ = new Subject<any>();
-    const audio = new (window['AudioContext'] || window['webkitAudioContext'])();
-    const oscillator = audio.createOscillator();
+  initAudio(beeper$: Subject<number>): Subscription {
+    return beeper$
+      .sampleTime(100)
+      .subscribe(
+        (x) => {
+          const oscillator = this.audioContext.createOscillator();
 
-    oscillator.connect(audio.destination);
-    oscillator.type = 'square';
+          oscillator.connect(this.audioContext.destination);
+          oscillator.type = 'square';
 
-    beeper$.sampleTime(100)
-      .do((key: number) => {
-        oscillator.frequency.value = Math.pow(2, (key - 49) / 12) * 440;
+          oscillator.frequency.value = Math.pow(2, (x - 49) / 12) * 440;
 
-        oscillator.start();
-        oscillator.stop(audio.currentTime + 0.100);
-      })
-      .takeUntil(this.gameOver$);
-
-    return beeper$;
+          oscillator.start();
+          oscillator.stop(this.audioContext.currentTime + 0.100);
+        });
   }
 
   collision(brick: BRICK, ball: BALL): boolean {
@@ -278,7 +288,7 @@ export class BreakoutComponent implements AfterViewInit {
       );
   }
 
-  update([ticker, paddle, objects]) {
+  update([, paddle, objects]) {
     this.context.clearRect(0, 0, this.breakoutArea.nativeElement.width, this.breakoutArea.nativeElement.height);
 
     this.drawPaddle(paddle);
@@ -288,14 +298,36 @@ export class BreakoutComponent implements AfterViewInit {
 
     if (objects.ball.position.y > this.breakoutArea.nativeElement.height - this.BALL_RADIUS) {
       this.beeper$.next(28);
-      // drawGameOver('GAME OVER');
-
+      this.drawGameOver('GAME OVER');
+      this.dispose();
     }
+
+    if (!objects.bricks.length) {
+      this.beeper$.next(52);
+      this.drawGameOver('CONGRATULATIONS');
+      this.dispose();
+    }
+
+    if (objects.collisions.paddle) {
+      this.beeper$.next(40);
+    }
+
+    if (objects.collisions.wall || objects.collisions.ceiling) {
+      this.beeper$.next(45);
+    }
+
+    if (objects.collisions.brick) {
+      this.beeper$.next(47 + Math.floor(objects.ball.position.y % 12));
+    }
+
   }
 
   get game$() {
-    return Observable.combineLatest(this.ticker$, this.paddle$, this.objects$)
-      .takeUntil(this.gameOver$);
+    return Observable.combineLatest(this.ticker$, this.paddle$, this.objects$);
+  }
+
+  dispose() {
+    this.gameSub.unsubscribe();
   }
 
   drawTitle() {
@@ -367,5 +399,17 @@ export class BreakoutComponent implements AfterViewInit {
     this.context.textAlign = 'left';
     this.context.font = '16px Courier New';
     this.context.fillText(score.toString(), this.BRICK_GAP, 16);
+  }
+
+  drawGameOver(text: string) {
+    this.context.clearRect(
+      this.breakoutArea.nativeElement.width / 4,
+      this.breakoutArea.nativeElement.height / 3,
+      this.breakoutArea.nativeElement.width / 2,
+      this.breakoutArea.nativeElement.height / 3
+    );
+    this.context.textAlign = 'center';
+    this.context.font = '24px Courier New';
+    this.context.fillText(text, this.breakoutArea.nativeElement.width / 2, this.breakoutArea.nativeElement.height / 2);
   }
 }
