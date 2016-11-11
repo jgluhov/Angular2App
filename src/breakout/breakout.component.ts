@@ -2,14 +2,17 @@ import {
   Component,
   ViewChild,
   ElementRef,
-  AfterViewInit, OnDestroy
+  AfterViewInit,
+  OnDestroy
 } from '@angular/core';
 
 import {
   Observable,
   Scheduler,
-  Subject, Subscription
+  Subject,
+  Subscription
 } from 'rxjs';
+
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -20,38 +23,14 @@ import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/do';
 
-type TICK = {
-  time: number,
-  delta: number
-};
-
-type PADDLE_DIRECTION = number;
-
-type PADDLE_POSITION = number;
-
-type BRICK = {
-  x: number,
-  y: number,
-  width: number,
-  height: number
-}
-
-type BALL_POSITION = {
-  x: number,
-  y: number
-}
-
-type BALL_DIRECTION = {
-  x: number,
-  y: number
-}
-
-type BALL = {
-  position: BALL_POSITION,
-  direction: BALL_DIRECTION
-}
-
-type SCORE = number;
+import {
+  BALL,
+  BRICK,
+  PADDLE_DIRECTION,
+  PADDLE_POSITION,
+  SCORE,
+  TICK
+} from './breakout.interfaces';
 
 @Component({
   templateUrl: './breakout.component.html',
@@ -60,24 +39,24 @@ type SCORE = number;
 
 export class BreakoutComponent implements AfterViewInit, OnDestroy {
   context: CanvasRenderingContext2D;
-  beeper$: Subject<number>;
   audioContext: any;
+
+  beeper$: Subject<number>;
 
   beeperSub: Subscription;
   gameSub: Subscription;
 
   PADDLE_SPEED = 240;
-
   PADDLE_WIDTH = 100;
   PADDLE_HEIGHT = 20;
+
   BALL_SPEED = 60;
+  BALL_RADIUS = 10;
 
   BRICK_GAP = 3;
   BRICK_HEIGHT = 20;
   BRICK_COLUMNS = 7;
   BRICK_ROWS = 5;
-
-  BALL_RADIUS = 10;
 
   @ViewChild('breakoutArea') breakoutArea: ElementRef;
 
