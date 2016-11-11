@@ -2,7 +2,18 @@ import {RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from '../auth/auth-guard.service';
 import {ProfileComponent} from '../profile/profile.component';
 
-const routes: Routes = [
+const gameRoutes: Routes = [
+  {
+    path: 'spaceship',
+    loadChildren: '../games/spaceship/spaceship.module#SpaceshipModule'
+  },
+  {
+    path: 'breakout',
+    loadChildren: '../games/breakout/breakout.module#BreakoutModule'
+  }
+];
+
+const featureRoutes: Routes = [
   {
     path: 'posts',
     loadChildren: '../features/posts/posts.module#PostsModule'
@@ -16,6 +27,19 @@ const routes: Routes = [
     loadChildren: '../features/contacts/contacts.module#ContactsModule'
   },
   {
+    path: 'counter',
+    loadChildren: '../features/counter/counter.module#CounterModule'
+  },
+  {
+    path: 'animation',
+    loadChildren: '../features/animation/animation.module#AnimationModule'
+  }
+];
+
+const routes: Routes = [
+  ...gameRoutes,
+  ...featureRoutes,
+  {
     path: 'github',
     canActivate: [AuthGuard],
     loadChildren: '../github/github.module#GitHubModule'
@@ -25,24 +49,8 @@ const routes: Routes = [
     loadChildren: '../auth/auth.module#AuthModule'
   },
   {
-    path: 'spaceship',
-    loadChildren: '../games/spaceship/spaceship.module#SpaceshipModule'
-  },
-  {
     path: 'profile',
     component: ProfileComponent
-  },
-  {
-    path: 'breakout',
-    loadChildren: '../games/breakout/breakout.module#BreakoutModule'
-  },
-  {
-    path: 'counter',
-    loadChildren: '../features/counter/counter.module#CounterModule'
-  },
-  {
-    path: 'animation',
-    loadChildren: '../features/animation/animation.module#AnimationModule'
   },
   {
     path: '',
