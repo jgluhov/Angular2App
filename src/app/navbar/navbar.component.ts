@@ -25,22 +25,6 @@ import {
   gameRoutes
 } from '../app.routes';
 
-type Item = {
-  url: string,
-  content: string,
-  category: string
-}
-
-type Dropdown = {
-  category: string,
-  items: Item[]
-}
-
-type Navbar = {
-  items: Object,
-  dropdowns: any
-}
-
 @Component({
   selector: 'navbar',
   animations: [
@@ -66,10 +50,7 @@ export class NavbarComponent {
   navbar: any;
 
   constructor(private authService: AuthService, private router: Router) {
-    this.composeNavbar().subscribe(data => {
-      this.navbar = data;
-      console.log(this.navbar)
-    });
+    this.composeNavbar().subscribe(data => this.navbar = data);
   }
 
   composeNavbar() {
@@ -100,7 +81,7 @@ export class NavbarComponent {
     const composedCommonRoutes$ = this.composeRoutes(commonRoutes, 'common');
 
     return composedCommonRoutes$
-      .reduce((items, item) => Object.assign({}, items, {[item.name.toLowerCase()]: item}), {})
+      .reduce((items, item) => Object.assign({}, items, {[item.name.toLowerCase()]: item}), {});
   }
 
   get dropdowns$() {
