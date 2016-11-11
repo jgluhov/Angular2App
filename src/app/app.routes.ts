@@ -5,15 +5,15 @@ import {ProfileComponent} from '../profile/profile.component';
 const routes: Routes = [
   {
     path: 'posts',
-    loadChildren: '../posts/posts.module#PostsModule'
+    loadChildren: '../features/posts/posts.module#PostsModule'
   },
   {
     path: 'wikipedia',
-    loadChildren: '../wikipedia/wikipedia.module#WikipediaModule'
+    loadChildren: '../features/wikipedia/wikipedia.module#WikipediaModule'
   },
   {
     path: 'contacts',
-    loadChildren: '../contacts/contacts.module#ContactsModule'
+    loadChildren: '../features/contacts/contacts.module#ContactsModule'
   },
   {
     path: 'github',
@@ -26,7 +26,7 @@ const routes: Routes = [
   },
   {
     path: 'spaceship',
-    loadChildren: '../spaceship/spaceship.module#SpaceshipModule'
+    loadChildren: '../games/spaceship/spaceship.module#SpaceshipModule'
   },
   {
     path: 'profile',
@@ -34,15 +34,15 @@ const routes: Routes = [
   },
   {
     path: 'breakout',
-    loadChildren: '../breakout/breakout.module#BreakoutModule'
+    loadChildren: '../games/breakout/breakout.module#BreakoutModule'
   },
   {
     path: 'counter',
-    loadChildren: '../counter/counter.module#CounterModule'
+    loadChildren: '../features/counter/counter.module#CounterModule'
   },
   {
     path: 'animation',
-    loadChildren: '../animation/animation.module#AnimationModule'
+    loadChildren: '../features/animation/animation.module#AnimationModule'
   },
   {
     path: '',

@@ -5,7 +5,7 @@ import {
   StoreEnhancer
 } from 'redux';
 import {AppState} from './app-state';
-import {counterReducer} from '../counter/counter-reducer';
+import {counterReducer} from '../features/counter/counter-reducer';
 
 const devtools: StoreEnhancer<AppState> = window['devToolsExtension'] ?
   window['devToolsExtension']() : f => f;
