@@ -2,7 +2,27 @@ import {RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from '../auth/auth-guard.service';
 import {ProfileComponent} from '../profile/profile.component';
 
-const gameRoutes: Routes = [
+export const commonRoutes: Routes = [
+  {
+    path: 'github',
+    canActivate: [AuthGuard],
+    loadChildren: '../github/github.module#GitHubModule'
+  },
+  {
+    path: 'auth',
+    loadChildren: '../auth/auth.module#AuthModule'
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
+  {
+    path: '',
+    loadChildren: '../home/home.module#HomeModule'
+  }
+];
+
+export const gameRoutes: Routes = [
   {
     path: 'spaceship',
     loadChildren: '../games/spaceship/spaceship.module#SpaceshipModule'
@@ -13,7 +33,7 @@ const gameRoutes: Routes = [
   }
 ];
 
-const featureRoutes: Routes = [
+export const featureRoutes: Routes = [
   {
     path: 'posts',
     loadChildren: '../features/posts/posts.module#PostsModule'
@@ -37,25 +57,9 @@ const featureRoutes: Routes = [
 ];
 
 const routes: Routes = [
+  ...commonRoutes,
   ...gameRoutes,
-  ...featureRoutes,
-  {
-    path: 'github',
-    canActivate: [AuthGuard],
-    loadChildren: '../github/github.module#GitHubModule'
-  },
-  {
-    path: 'auth',
-    loadChildren: '../auth/auth.module#AuthModule'
-  },
-  {
-    path: 'profile',
-    component: ProfileComponent
-  },
-  {
-    path: '',
-    loadChildren: '../home/home.module#HomeModule'
-  }
+  ...featureRoutes
 ];
 
 export default RouterModule.forRoot(routes);

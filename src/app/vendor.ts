@@ -9,13 +9,12 @@ import '@angular/router';
 // RxJS
 // import 'rxjs';
 
-// Rx-DOM
-require('rx-dom/dist/rx.dom');
-
 // Lodash
 import 'lodash';
 
 // Bootstrap
+window['jQuery'] = window['$'] =  require('jquery/dist/jquery');
+require('bootstrap/dist/js/bootstrap');
 require('bootstrap/dist/css/bootstrap.css');
 require('font-awesome/css/font-awesome.css');
 require('./styles.styl');

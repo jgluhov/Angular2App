@@ -6,8 +6,40 @@ import {
   transition,
   animate
 } from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, Routes, Route} from '@angular/router';
 import {AuthService} from '../../auth/auth.service';
+
+import {Observable} from 'rxjs';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/pluck';
+import 'rxjs/add/operator/reduce';
+import 'rxjs/add/operator/groupBy';
+import 'rxjs/add/operator/toArray';
+import 'rxjs/add/operator/share';
+
+import {
+  commonRoutes,
+  featureRoutes,
+  gameRoutes
+} from '../app.routes';
+
+type Item = {
+  url: string,
+  content: string,
+  category: string
+}
+
+type Dropdown = {
+  category: string,
+  items: Item[]
+}
+
+type Navbar = {
+  items: Object,
+  dropdowns: any
+}
 
 @Component({
   selector: 'navbar',
@@ -31,20 +63,59 @@ import {AuthService} from '../../auth/auth.service';
 
 export class NavbarComponent {
   itemState: string;
-
-  navs = [
-    {url: '', content: 'Home'},
-    {url: 'posts', content: 'Posts'},
-    {url: 'wikipedia', content: 'Wikipedia'},
-    {url: 'contacts', content: 'Contacts'},
-    {url: 'github', content: 'GitHub'},
-    {url: 'spaceship', content: 'Spaceship'},
-    {url: 'counter', content: 'Counter'},
-    {url: 'animation', content: 'Animation'},
-    {url: 'breakout', content: 'Breakout'}
-  ];
+  navbar: any;
 
   constructor(private authService: AuthService, private router: Router) {
+    this.composeNavbar().subscribe(data => {
+      this.navbar = data;
+      console.log(this.navbar)
+    });
+  }
+
+  composeNavbar() {
+    return Observable.combineLatest(
+      this.items$, this.dropdowns$, (items, dropdowns) => {
+        return {
+          items: items,
+          dropdowns: dropdowns
+        };
+      });
+  }
+
+  static toCapitalize(s: string) {
+    return s.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
+  }
+
+  composeRoutes(routes: Routes, category: string) {
+    return Observable.from(routes)
+      .filter((route: Route) => route.path.length > 0)
+      .map((route: Route) => ({
+        path: route.path,
+        name: NavbarComponent.toCapitalize(route.path),
+        category: NavbarComponent.toCapitalize(category)
+      }));
+  }
+
+  get items$() {
+    const composedCommonRoutes$ = this.composeRoutes(commonRoutes, 'common');
+
+    return composedCommonRoutes$
+      .reduce((items, item) => Object.assign({}, items, {[item.name.toLowerCase()]: item}), {})
+  }
+
+  get dropdowns$() {
+    const composedFeaturesRoutes$ = this.composeRoutes(featureRoutes, 'features');
+    const composedGameRoutes$ = this.composeRoutes(gameRoutes, 'games');
+
+    return Observable.concat(composedFeaturesRoutes$, composedGameRoutes$)
+      .groupBy(route => route.category)
+      .flatMap(group => group.reduce((acc, curr) => [...acc, curr], [])
+        .map((items) => ({
+          category: group.key,
+          items: items
+        }))
+      )
+      .toArray();
   }
 
   isActiveRoute(route: string) {
