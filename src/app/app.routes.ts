@@ -33,7 +33,7 @@ export const gameRoutes: Routes = [
   }
 ];
 
-export const featureRoutes: Routes = [
+export const miscellaneousRoutes: Routes = [
   {
     path: 'posts',
     loadChildren: '../features/posts/posts.module#PostsModule'
@@ -59,7 +59,7 @@ export const featureRoutes: Routes = [
 const routes: Routes = [
   ...commonRoutes,
   ...gameRoutes,
-  ...featureRoutes
+  ...miscellaneousRoutes
 ];
 
 export default RouterModule.forRoot(routes);

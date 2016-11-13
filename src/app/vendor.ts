@@ -12,6 +12,9 @@ import '@angular/router';
 // Lodash
 import 'lodash';
 
+// Immutable
+import 'immutable';
+
 // Bootstrap
 window['jQuery'] = window['$'] =  require('jquery/dist/jquery');
 require('bootstrap/dist/js/bootstrap');

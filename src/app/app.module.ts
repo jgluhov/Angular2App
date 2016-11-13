@@ -7,15 +7,17 @@ import {AuthGuard} from '../auth/auth-guard.service';
 import {AuthService} from '../auth/auth.service';
 import {AuthGitHub} from '../auth/auth-github.service';
 import {ProfileComponent} from '../profile/profile.component';
-import {NavbarComponent} from './navbar/navbar.component';
+
 import {
   AppStore,
   store
 } from './app-store';
 
+import {NavbarModule} from '../navbar/navbar.module';
+
 @NgModule({
-  imports: [BrowserModule, appRoutes, HttpModule],
-  declarations: [AppComponent, ProfileComponent, NavbarComponent],
+  imports: [BrowserModule, appRoutes, HttpModule, NavbarModule],
+  declarations: [AppComponent, ProfileComponent],
   bootstrap: [AppComponent],
   providers: [AuthGuard, AuthService, AuthGitHub, {
     provide: AppStore, useValue: store

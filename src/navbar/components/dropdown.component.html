@@ -1,0 +1,15 @@
+<a href="#" class="dropdown-toggle"
+   data-toggle="dropdown"
+   role="button"
+   aria-haspopup="true"
+   aria-expanded="false"
+>{{item.name}} <span class="caret"></span>
+</a>
+<ul class="dropdown-menu">
+    <li *ngFor="let item of item.items"
+        [routerLink]="item.url"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact:true}">
+        <a [@itemState]="navbarService.isActiveRoute(item.url)">{{item.name}}</a>
+    </li>
+</ul>
