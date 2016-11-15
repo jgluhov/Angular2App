@@ -36,23 +36,23 @@ export const gameRoutes: Routes = [
 export const miscellaneousRoutes: Routes = [
   {
     path: 'posts',
-    loadChildren: '../features/posts/posts.module#PostsModule'
+    loadChildren: '../miscellaneous/posts/posts.module#PostsModule'
   },
   {
     path: 'wikipedia',
-    loadChildren: '../features/wikipedia/wikipedia.module#WikipediaModule'
+    loadChildren: '../miscellaneous/wikipedia/wikipedia.module#WikipediaModule'
   },
   {
     path: 'contacts',
-    loadChildren: '../features/contacts/contacts.module#ContactsModule'
+    loadChildren: '../miscellaneous/contacts/contacts.module#ContactsModule'
   },
   {
     path: 'counter',
-    loadChildren: '../features/counter/counter.module#CounterModule'
+    loadChildren: '../miscellaneous/counter/counter.module#CounterModule'
   },
   {
     path: 'animation',
-    loadChildren: '../features/animation/animation.module#AnimationModule'
+    loadChildren: '../miscellaneous/animation/animation.module#AnimationModule'
   }
 ];
 

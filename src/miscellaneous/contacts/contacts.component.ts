@@ -18,10 +18,6 @@ export class ContactsComponent implements AfterViewInit {
 
     formStatus$: Observable<Object>;
 
-    static onSubmit(formValue: Object) {
-        console.log(formValue);
-    }
-
     ngAfterViewInit() {
         this.formStatus$ = Observable.combineLatest(
             this.form.statusChanges,
