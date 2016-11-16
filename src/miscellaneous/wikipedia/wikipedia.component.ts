@@ -48,9 +48,13 @@ export class WikipediaComponent implements OnInit {
       })
       .map(item => Object.assign({}, item, {
         datetime: new Date(item.timestamp).toISOString(),
-        date: new Intl.DateTimeFormat('en-US', this.dateOptions)
-          .format(new Date(item.timestamp))
+        date: this.toDateTimeFormat(item.timestamp)
       }))
       .subscribe(this.time$);
+  }
+
+  toDateTimeFormat(timestamp: number) {
+    return new Intl.DateTimeFormat('en-US', this.dateOptions)
+      .format(new Date(timestamp));
   }
 }
