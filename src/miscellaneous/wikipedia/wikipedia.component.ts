@@ -4,7 +4,6 @@ import {WikipediaSearchService} from './wikipedia-search.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/timestamp';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/publish';
 
 @Component({
   templateUrl: './wikipedia.component.html',
@@ -30,8 +29,7 @@ export class WikipediaComponent implements OnInit {
     second: 'numeric'
   };
 
-  constructor(private service: WikipediaSearchService) {
-  };
+  constructor(private service: WikipediaSearchService) {};
 
   ngOnInit() {
     this.time$ = new Subject<Object>();
@@ -43,9 +41,6 @@ export class WikipediaComponent implements OnInit {
 
     this.items$
       .timestamp()
-      .do(() => {
-        console.log('datetime');
-      })
       .map(item => Object.assign({}, item, {
         datetime: new Date(item.timestamp).toISOString(),
         date: this.toDateTimeFormat(item.timestamp)
