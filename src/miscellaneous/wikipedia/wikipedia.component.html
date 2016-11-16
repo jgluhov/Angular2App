@@ -1,16 +1,17 @@
 <div class="page-header">
-    <h1>Wikipedia Component</h1>
+  <h1>Wikipedia Component</h1>
 </div>
 <div class="well well-sm">
-    <form>
-        <div class="form-group">
-            <label for="search" class="sr-only"></label>
-            <input type="text" id="search" #search class="form-control input-lg" placeholder="Search"
-                   (input)="term$.next(search.value)"
-            >
-        </div>
-    </form>
-    <ul class="list-unstyled">
-        <li *ngFor="let item of (items$ | async)" highlight="yellow">{{item}}</li>
-    </ul>
+  <time [attr.datetime]="(time$ | async)?.datetime">{{(time$ | async)?.date}}</time>
+  <form>
+    <div class="form-group">
+      <label for="search" class="sr-only"></label>
+      <input type="text" id="search" #search class="form-control input-lg" placeholder="Search"
+             (input)="term$.next(search.value)"
+      >
+    </div>
+  </form>
+  <ul class="list-unstyled">
+    <li *ngFor="let item of (items$ | async)" highlight="yellow">{{item}}</li>
+  </ul>
 </div>
