@@ -11,7 +11,7 @@ describe('HomeComponent', () => {
         })
         .compileComponents().then(() => {
             fixture = TestBed.createComponent(HomeComponent);
-            comp = fixture.componentInstance
+            comp = fixture.componentInstance;
         });
     }));
 
