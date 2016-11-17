@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {QuestionService} from '../miscellaneous/dynamic-form/question.service';
 // import {QuestionService} from '../miscellaneous/dynamic-form/question.service';
 
 @Component({
@@ -7,11 +8,11 @@ import {Title} from '@angular/platform-browser';
 })
 
 export class HomeComponent {
-  // questions: any[];
+  questions: any[];
 
-  constructor(private titleService: Title) {
+  constructor(private titleService: Title, questionService: QuestionService) {
     this.setTitle('Home page');
-    // this.questions = questionService.getQuestions();
+    this.questions = questionService.getQuestions();
   }
 
   public setTitle(newTitle: string) {
