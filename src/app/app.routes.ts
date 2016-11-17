@@ -53,6 +53,10 @@ export const miscellaneousRoutes: Routes = [
   {
     path: 'animation',
     loadChildren: '../miscellaneous/animation/animation.module#AnimationModule'
+  },
+  {
+    path: 'dynamic-form',
+    loadChildren: '../miscellaneous/dynamic-form/dynamic-form.module#DynamicFormModule'
   }
 ];
 
