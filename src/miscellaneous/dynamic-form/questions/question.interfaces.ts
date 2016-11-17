@@ -1,6 +1,7 @@
 export interface IQuestionOptions {
-  value?: T;
+  value?: any;
   key?: string;
+  type?: string;
   label?: string;
   required?: boolean;
   order?: number;
