@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {Title} from '@angular/platform-browser';
-import {QuestionService} from '../miscellaneous/dynamic-form/question.service';
-// import {QuestionService} from '../miscellaneous/dynamic-form/question.service';
+import {QuestionService} from '../common/components/dynamic-form/question.service';
 
 @Component({
   templateUrl: './home.component.html'
