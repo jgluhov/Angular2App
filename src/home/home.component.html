@@ -4,3 +4,16 @@
 <div class="well well-sm">
   <dynamic-form [questions]="questions"></dynamic-form>
 </div>
+<div class="well well-sm">
+  <p>
+    Hip!
+  </p>
+  <template [unless]="isVisible">
+    <p>
+      Hop!
+    </p>
+  </template>
+  <p *unless="isVisible">
+    Hooray!
+  </p>
+</div>

@@ -4,6 +4,7 @@ import {HomeComponent} from './home.component';
 import homeRoutes from './home.routes';
 import {DynamicFormModule} from '../common/components/dynamic-form/dynamic-form.module';
 import {QuestionService} from '../common/components/dynamic-form/question.service';
+import {UnlessDirective} from '../common/unless.directive';
 
 @NgModule({
   imports: [
@@ -11,7 +12,7 @@ import {QuestionService} from '../common/components/dynamic-form/question.servic
     homeRoutes,
     DynamicFormModule
   ],
-  declarations: [HomeComponent],
+  declarations: [HomeComponent, UnlessDirective],
   providers: [QuestionService]
 })
 

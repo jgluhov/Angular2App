@@ -1,4 +1,7 @@
-import {Component} from '@angular/core';
+import {
+  Component, HostListener
+} from '@angular/core';
+
 import {Title} from '@angular/platform-browser';
 import {QuestionService} from '../common/components/dynamic-form/question.service';
 
@@ -8,10 +11,19 @@ import {QuestionService} from '../common/components/dynamic-form/question.servic
 
 export class HomeComponent {
   questions: any[];
+  isVisible: boolean;
 
-  constructor(private titleService: Title, questionService: QuestionService) {
+  @HostListener('dblclick') onClick() {
+    this.isVisible = !this.isVisible;
+  }
+
+  constructor(
+    private titleService: Title,
+    private questionService: QuestionService
+  ) {
     this.setTitle('Home page');
     this.questions = questionService.getQuestions();
+    this.isVisible = false;
   }
 
   public setTitle(newTitle: string) {
