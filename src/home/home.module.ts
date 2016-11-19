@@ -10,13 +10,15 @@ import {QuestionService} from '../common/components/dynamic-form/question.servic
 import {UnlessDirective} from '../common/unless.directive';
 
 import {TabsModule} from '../common/tabs/tabs.module';
+import {InfiniteTableModule} from '../common/infinite-table/infinite-table.module';
 
 @NgModule({
   imports: [
     CommonModule,
     homeRoutes,
     DynamicFormModule,
-    TabsModule
+    TabsModule,
+    InfiniteTableModule
   ],
   declarations: [
     HomeComponent,
