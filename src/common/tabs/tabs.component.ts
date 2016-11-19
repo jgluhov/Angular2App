@@ -1,8 +1,8 @@
 import {
   Component,
   QueryList,
-  OnInit,
-  ContentChildren
+  ContentChildren,
+  AfterViewInit
 } from '@angular/core';
 
 import {TabComponent} from './tab.component';
@@ -12,34 +12,48 @@ import {TabComponent} from './tab.component';
   template: `
     <div>     
       <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" *ngFor="let tab of tabs">
-          <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a>
-        </li>
-        <!--<li role="presentation">-->
-          <!--<a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a>-->
-        <!--</li>-->
-        <!--<li role="presentation">-->
-          <!--<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a>-->
-        <!--</li>-->
-        <!--<li role="presentation">-->
-          <!--<a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a>-->
-        <!--</li>-->
+        <li role="presentation" 
+          *ngFor="let tab of tabs" 
+          [class.active]="isSelectedTab(tab)">
+          <a [href]="tab.href" 
+            [attr.aria-controls]="tab.name"
+            [attr.aria-expanded]="isSelectedTab(tab)"
+            (click)="onSelect(tab)"
+            role="tab" 
+            data-toggle="tab">
+            {{tab.title}}
+          </a>          
+        </li>        
       </ul>
 
       <div class="tab-content">       
-        <div role="tabpanel" class="tab-pane active" id="home" *ngFor="let tab of tabs">
+        <div role="tabpanel" 
+          class="tab-pane"
+          *ngFor="let tab of tabs"
+          [id]="tab.id"
+          [class.active]="isSelectedTab(tab)">
           <template [tab]="tab"></template>
-        </div>               
+        </div>
       </div>
     </div>
   `
 })
 
-export class TabsComponent implements OnInit {
+export class TabsComponent implements AfterViewInit {
   @ContentChildren(TabComponent) tabs: QueryList<TabComponent>;
 
-  ngOnInit() {
-    // console.log(this);
+  private selectedTab: TabComponent;
+
+  ngAfterViewInit() {
+    this.selectedTab = this.tabs.first;
+  }
+
+  onSelect(tab: TabComponent) {
+    this.selectedTab = tab;
+  }
+
+  isSelectedTab(tab: TabComponent) {
+    return tab === this.selectedTab;
   }
 }
 

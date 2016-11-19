@@ -2,7 +2,7 @@ import {
   Component,
   TemplateRef,
   ViewChild,
-  OnInit, ContentChildren, ElementRef
+  Attribute
 } from '@angular/core';
 
 @Component({
@@ -14,17 +14,19 @@ import {
   `
 })
 
-export class TabComponent implements OnInit {
+export class TabComponent {
   @ViewChild('content') content: TemplateRef<any>;
-  el: HTMLElement;
-  id: string;
-  title: string;
 
-  constructor(private elementRef: ElementRef) {
-    this.el = this.elementRef.nativeElement;
+  constructor(
+    @Attribute('id') private id: string,
+    @Attribute('title') private title: string
+  ) {}
+
+  get href() {
+    return '#' + this.id;
   }
 
-  ngOnInit() {
-    console.log(this);
+  get name() {
+    return this.id;
   }
 }

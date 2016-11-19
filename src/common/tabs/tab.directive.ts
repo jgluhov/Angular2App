@@ -2,7 +2,8 @@ import {
   Directive,
   Input,
   ViewContainerRef,
-  OnInit
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 
 import {TabComponent} from './tab.component';
@@ -11,12 +12,16 @@ import {TabComponent} from './tab.component';
   selector: '[tab]'
 })
 
-export class TabDirective implements OnInit {
+export class TabDirective implements OnInit, OnDestroy {
   @Input('tab') tab: TabComponent;
 
   constructor(private viewContainerRef: ViewContainerRef) {}
 
   ngOnInit() {
     this.viewContainerRef.createEmbeddedView(this.tab.content);
+  }
+
+  ngOnDestroy() {
+    this.viewContainerRef.clear();
   }
 }
