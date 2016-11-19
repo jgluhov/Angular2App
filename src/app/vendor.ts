@@ -17,7 +17,7 @@ import 'immutable';
 
 // Bootstrap
 window['jQuery'] = window['$'] =  require('jquery/dist/jquery');
-require('bootstrap/dist/js/bootstrap');
+require('bootstrap/js/dropdown');
 require('bootstrap/dist/css/bootstrap.css');
 require('font-awesome/css/font-awesome.css');
 require('./styles.styl');
