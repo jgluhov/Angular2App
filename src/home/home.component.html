@@ -1,24 +1,25 @@
 <div class="page-header">
   <h1>Home Component</h1>
 </div>
-<infinite-table></infinite-table>
 
-<!--<div class="well well-sm">-->
-  <!--<dynamic-form [questions]="questions"></dynamic-form>-->
-<!--</div>-->
-<!--<div class="well well-sm">-->
-  <!--<p>-->
-    <!--Hip!-->
-  <!--</p>-->
-  <!--<template [unless]="isVisible">-->
-    <!--<p>-->
-      <!--Hop!-->
-    <!--</p>-->
-  <!--</template>-->
-  <!--<p *unless="isVisible">-->
-    <!--Hooray!-->
-  <!--</p>-->
-<!--</div>-->
+<div class="well well-sm">
+  <dynamic-form [questions]="questions"></dynamic-form>
+</div>
+<div class="well well-sm">
+  <p>
+    Hip!
+  </p>
+  <template [unless]="isVisible">
+    <p>
+      Hop!
+    </p>
+  </template>
+  <p *unless="isVisible">
+    Hooray!
+  </p>
+</div>
+
+<infinite-table data="data"></infinite-table>
 
 <!--<div class="well well-sm">-->
   <!--<tabs>-->

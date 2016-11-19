@@ -26,6 +26,10 @@ export class HomeComponent {
     this.isVisible = false;
   }
 
+  get data(): Array<string> {
+    return '-'.repeat(500).split('');
+  }
+
   public setTitle(newTitle: string) {
     this.titleService.setTitle(newTitle);
   }
