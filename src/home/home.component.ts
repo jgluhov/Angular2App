@@ -5,6 +5,11 @@ import {
 import {Title} from '@angular/platform-browser';
 import {QuestionService} from '../common/components/dynamic-form/question.service';
 
+import {Observable} from 'rxjs';
+import 'rxjs/observable/from';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toArray';
+
 @Component({
   templateUrl: './home.component.html'
 })
@@ -12,6 +17,8 @@ import {QuestionService} from '../common/components/dynamic-form/question.servic
 export class HomeComponent {
   questions: any[];
   isVisible: boolean;
+
+  MAX: number = 1000;
 
   @HostListener('dblclick') onClick() {
     this.isVisible = !this.isVisible;
@@ -26,8 +33,19 @@ export class HomeComponent {
     this.isVisible = false;
   }
 
-  get data(): Array<string> {
-    return '-'.repeat(50000).split('');
+  get data$() {
+    const dataArray = new Array(this.MAX);
+
+    return Observable.from(dataArray.fill(0))
+      .map(HomeComponent.generate)
+      .toArray();
+  }
+
+  static generate(value: number, index: number): Object {
+    return {
+      index: index,
+      value: String.fromCharCode(index)
+    };
   }
 
   public setTitle(newTitle: string) {

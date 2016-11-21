@@ -17,129 +17,104 @@ import 'rxjs/add/operator/bufferCount';
 
 @Component({
   selector: 'infinite-table',
-  template: `
-    <div class="infinite-table-header" #headerRef>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th># Index</th>
-            <th># Value 0</th>
-            <th># Value 1</th>
-            <th># Value 2</th>
-            <th># Value 3</th>
-            <th># Value 4</th>
-            <th># Value 5</th>
-            <th># Value 6</th>
-            <th># Value 7</th>
-            <th># Value 8</th>
-            <th># Value 9</th>
-            <th># Value 10</th>
-          </tr>
-        </thead>
-      </table>     
-    </div>
-    
-    <div class="infinite-table-content" #contentRef>
-      <table class="table table-bordered" [style.height.px]="totalHeight" #bodyRef>        
-        <tbody>
-          <tr *ngFor="let item of (visibleData$ | async)" [style.top.px]="item.index * 38">
-            <td>{{item.index + 1}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-            <td>{{item.value}}</td>
-          </tr>         
-        </tbody>
-      </table>
-    </div>
-`,
+  templateUrl: './infinite-table.component.html',
   styleUrls: ['./infinite-table.component.styl']
 })
 
 export class InfiniteTableComponent implements OnInit {
   @Input('data') data: Array<string>;
 
+  @Input('infiniteTableHeight')
+  set infiniteTableHeight(value: number) {
+      this.contentHeight = value || 380;
+  }
+
   @ViewChild('headerRef') headerRef: ElementRef;
   @ViewChild('contentRef') contentRef: ElementRef;
   @ViewChild('bodyRef') bodyRef: ElementRef;
 
-  totalRows: number;
-  rowHeight: number = 38;
-
-  yPosition$: Observable<number>;
-
   initScrollSubject$: ReplaySubject<number>;
-  firstVisibleRow$: Observable<number>;
-  rowCount$: Observable<number>;
-  visibleIndices$: Observable<Array<number>>;
   visibleData$: Observable<Array<Object>>;
 
-  get contentHeight() {
-    return this.contentRef.nativeElement.clientHeight;
-  }
+  contentHeight: number;
 
   get totalHeight() {
-    return this.rowHeight * this.totalRows;
+    return this.rowHeight * this.dataCount;
   }
 
   get visibleRowsCount() {
     return Math.ceil(this.contentHeight / this.rowHeight);
   }
 
-  get scrollPosition() {
+  get rowHeight(): number {
+    return 38;
+  }
+
+  get dataCount() {
+    return this.data.length;
+  }
+
+  getContentScrollPosition(): number {
     return this.contentRef.nativeElement.scrollTop;
   }
 
   initialize() {
-    this.totalRows = this.data.length;
     this.initScrollSubject$ = new ReplaySubject<number>(1);
-    this.initScrollSubject$.next(this.scrollPosition);
+    this.initScrollSubject$.next(this.getContentScrollPosition());
   }
 
-  ngOnInit() {
+  get contentScrollPosition$(): Observable<number> {
+    return Observable.fromEvent(this.contentRef.nativeElement, 'scroll')
+      .map(this.getContentScrollPosition.bind(this)) as Observable<number>;
+  }
 
-    this.initialize();
+  get scrollPosition$(): Observable<number> {
+    return this.initScrollSubject$.merge(this.contentScrollPosition$);
+  }
 
-    this.yPosition$ = this.initScrollSubject$.merge(
-      Observable.fromEvent(this.contentRef.nativeElement, 'scroll')
-        .map(() => this.scrollPosition)
-    );
+  get firstVisibleRow$(): Observable<number> {
+    return this.scrollPosition$
+      .map(position => Math.floor(position / this.rowHeight));
+  }
 
-    this.firstVisibleRow$ = this.yPosition$
-      .map(yPosition => Math.floor(yPosition / this.rowHeight));
+  get rowCount$() {
+    return Observable.of(this.visibleRowsCount)
+      .map((visibleRowsCount: number) => {
+        return visibleRowsCount > this.dataCount ?
+          this.dataCount : visibleRowsCount;
+      });
+  }
 
-    this.rowCount$ = Observable.of(this.visibleRowsCount);
-
-    this.visibleIndices$ = Observable.combineLatest(
+  get visibleIndices$() {
+    return Observable.combineLatest(
       this.firstVisibleRow$, this.rowCount$,
       (firstVisibleRow, rowCount) => {
 
         let indices: Array<number> = [];
 
-        const lastVisibleRow = firstVisibleRow + rowCount + 1;
+        const lastVisibleRow = firstVisibleRow + rowCount;
 
-        if (lastVisibleRow > this.totalRows) {
-          firstVisibleRow -= lastVisibleRow - this.totalRows;
+        if (lastVisibleRow >= this.dataCount) {
+          firstVisibleRow -= lastVisibleRow - this.dataCount;
         }
 
-        for (let i = 0; i <= rowCount; i++) {
+        for (let i = 0; i < rowCount; i++) {
           indices.push(i + firstVisibleRow);
         }
 
         return indices;
       }
     );
+  }
+
+  rowPositionCount(index: number) {
+    return index * this.rowHeight;
+  }
+
+  ngOnInit() {
+    this.initialize();
 
     this.visibleData$ = this.visibleIndices$
-      .map((indices: Array<number>) => indices.map((index) => ({
-        index: index,
-        value: this.data[index]
-      })));
+      .map((indices: Array<number>) => indices.map((index) => this.data[index]));
   }
 }

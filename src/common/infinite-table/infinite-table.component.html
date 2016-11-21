@@ -1,0 +1,25 @@
+<div class="infinite-table-container">
+  <div class="infinite-table-header" #headerRef>
+    <table class="table">
+      <thead>
+      <tr>
+        <th># Index</th>
+        <th># Value 0</th>
+      </tr>
+      </thead>
+    </table>
+  </div>
+  <div #contentRef
+       class="infinite-table-content"
+       [style.height.px]="contentHeight">
+    <table class="table" [style.height.px]="totalHeight" #bodyRef>
+      <tbody>
+      <tr *ngFor="let item of (visibleData$ | async)"
+          [style.top.px]="rowPositionCount(item.index)">
+        <td>{{item.index + 1}}</td>
+        <td>{{item.value}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

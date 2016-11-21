@@ -1,7 +1,15 @@
 .infinite-table-header
   > table
+    display flex
+    flex-flow column
+    width 100%
     margin-bottom 0
-    width calc(100% - 17px)
+
+    > thead
+      flex 0 0 auto
+      width calc(100% - 17px)
+      display table
+      table-layout fixed
 
 
 .infinite-table-content
@@ -15,8 +23,10 @@
     width: 100%;
 
     tbody
-      flex: 1 1 auto;
+      flex: 1 1 auto
+
       tr
+        height 38px
         width 100%
         display table
         table-layout fixed

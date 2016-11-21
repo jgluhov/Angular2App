@@ -19,7 +19,10 @@
   <!--</p>-->
 <!--</div>-->
 
-<infinite-table [data]="data"></infinite-table>
+<infinite-table
+    [infiniteTableHeight]="380"
+    [data]="(data$ | async)"
+></infinite-table>
 
 <!--<div class="well well-sm">-->
   <!--<tabs>-->
