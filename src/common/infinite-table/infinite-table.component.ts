@@ -44,38 +44,63 @@ export class InfiniteTableComponent implements OnInit, AfterViewInit {
   @ViewChild('bodyRef') bodyRef: ElementRef;
   @ViewChild('headRef') headRef: ElementRef;
 
-  visibleContainerHeight: number = 420;
   rowTotal: number = 10000;
 
   headHeight: number = 40;
   rowHeight: number = 38;
 
   yPosition$: Observable<number>;
-  tableHeight$: Observable<number>;
+
+  initScrollSubject$: ReplaySubject<number>;
+  firstVisibleRow$: Observable<number>;
+  rowCount$: Observable<number>;
+  visibleIndices$: Observable<Array<string>>;
+
+  get containerHeight() {
+    return this.containerRef.nativeElement.clientHeight;
+  }
 
   get totalContainerHeight() {
     return this.rowHeight * this.rowTotal;
   }
 
   get visibleRowsCount() {
-    return Math.ceil((this.visibleContainerHeight - this.headHeight) / this.rowHeight);
+    return Math.ceil((this.containerHeight - this.headHeight) / this.rowHeight);
   }
 
   get bodyScrollTop() {
     return this.bodyRef.nativeElement.scrollTop;
   }
 
+  initialize() {
+    this.initScrollSubject$ = new ReplaySubject<number>(1);
+    this.initScrollSubject$.next(this.bodyScrollTop);
+  }
+
   ngOnInit() {
 
-    const initialScrollSubject$ = new ReplaySubject<number>(1);
-    initialScrollSubject$.next(this.bodyScrollTop);
+    this.initialize();
 
-    this.yPosition$ = initialScrollSubject$.merge(
+    this.yPosition$ = this.initScrollSubject$.merge(
       Observable.fromEvent(this.bodyRef.nativeElement, 'scroll')
         .map(() => this.bodyScrollTop)
     );
 
-    this.yPosition$.subscribe(x => console.log(x));
+    this.firstVisibleRow$ = this.yPosition$
+      .map(yPosition => Math.floor(yPosition / this.rowHeight));
+
+    this.rowCount$ = Observable.of(this.visibleRowsCount);
+
+    this.visibleIndices$ = Observable.combineLatest(
+      this.firstVisibleRow$, this.rowCount$,
+      (firstVisibleRow, rowCount) => {
+        console.log(firstVisibleRow, rowCount);
+
+        return ['-'];
+      }
+    );
+
+    this.visibleIndices$.subscribe(x => console.log(x));
   }
 
   ngAfterViewInit() {
