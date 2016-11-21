@@ -27,7 +27,7 @@ export class HomeComponent {
   }
 
   get data(): Array<string> {
-    return '-'.repeat(500).split('');
+    return '-'.repeat(50000).split('');
   }
 
   public setTitle(newTitle: string) {

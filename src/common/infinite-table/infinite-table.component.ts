@@ -2,8 +2,8 @@ import {
   Component,
   ViewChild,
   ElementRef,
-  AfterViewInit,
-  Input, OnInit
+  Input,
+  OnInit
 } from '@angular/core';
 
 import {
@@ -18,35 +18,58 @@ import 'rxjs/add/operator/bufferCount';
 @Component({
   selector: 'infinite-table',
   template: `
-    <div class="infinite-table-container" [style.height]="totalContainerHeight" #containerRef>
+    <div class="infinite-table-header" #headerRef>
       <table class="table table-bordered">
-        <thead #headRef>
+        <thead>
           <tr>
             <th># Index</th>
-            <th># Value</th>
+            <th># Value 0</th>
+            <th># Value 1</th>
+            <th># Value 2</th>
+            <th># Value 3</th>
+            <th># Value 4</th>
+            <th># Value 5</th>
+            <th># Value 6</th>
+            <th># Value 7</th>
+            <th># Value 8</th>
+            <th># Value 9</th>
+            <th># Value 10</th>
           </tr>
         </thead>
-        <tbody #bodyRef>
-          <tr *ngFor="let item of data; let i = index">
-            <td>{{i + 1}}</td>
-            <td>{{item}}</td>
+      </table>     
+    </div>
+    
+    <div class="infinite-table-content" #contentRef>
+      <table class="table table-bordered" [style.height.px]="totalHeight" #bodyRef>        
+        <tbody>
+          <tr *ngFor="let item of (visibleData$ | async)" [style.top.px]="item.index * 38">
+            <td>{{item.index + 1}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.value}}</td>
           </tr>         
         </tbody>
       </table>
-    </div>`,
+    </div>
+`,
   styleUrls: ['./infinite-table.component.styl']
 })
 
-export class InfiniteTableComponent implements OnInit, AfterViewInit {
+export class InfiniteTableComponent implements OnInit {
   @Input('data') data: Array<string>;
 
-  @ViewChild('containerRef') containerRef: ElementRef;
+  @ViewChild('headerRef') headerRef: ElementRef;
+  @ViewChild('contentRef') contentRef: ElementRef;
   @ViewChild('bodyRef') bodyRef: ElementRef;
-  @ViewChild('headRef') headRef: ElementRef;
 
-  rowTotal: number = 10000;
-
-  headHeight: number = 40;
+  totalRows: number;
   rowHeight: number = 38;
 
   yPosition$: Observable<number>;
@@ -54,27 +77,29 @@ export class InfiniteTableComponent implements OnInit, AfterViewInit {
   initScrollSubject$: ReplaySubject<number>;
   firstVisibleRow$: Observable<number>;
   rowCount$: Observable<number>;
-  visibleIndices$: Observable<Array<string>>;
+  visibleIndices$: Observable<Array<number>>;
+  visibleData$: Observable<Array<Object>>;
 
-  get containerHeight() {
-    return this.containerRef.nativeElement.clientHeight;
+  get contentHeight() {
+    return this.contentRef.nativeElement.clientHeight;
   }
 
-  get totalContainerHeight() {
-    return this.rowHeight * this.rowTotal;
+  get totalHeight() {
+    return this.rowHeight * this.totalRows;
   }
 
   get visibleRowsCount() {
-    return Math.ceil((this.containerHeight - this.headHeight) / this.rowHeight);
+    return Math.ceil(this.contentHeight / this.rowHeight);
   }
 
-  get bodyScrollTop() {
-    return this.bodyRef.nativeElement.scrollTop;
+  get scrollPosition() {
+    return this.contentRef.nativeElement.scrollTop;
   }
 
   initialize() {
+    this.totalRows = this.data.length;
     this.initScrollSubject$ = new ReplaySubject<number>(1);
-    this.initScrollSubject$.next(this.bodyScrollTop);
+    this.initScrollSubject$.next(this.scrollPosition);
   }
 
   ngOnInit() {
@@ -82,8 +107,8 @@ export class InfiniteTableComponent implements OnInit, AfterViewInit {
     this.initialize();
 
     this.yPosition$ = this.initScrollSubject$.merge(
-      Observable.fromEvent(this.bodyRef.nativeElement, 'scroll')
-        .map(() => this.bodyScrollTop)
+      Observable.fromEvent(this.contentRef.nativeElement, 'scroll')
+        .map(() => this.scrollPosition)
     );
 
     this.firstVisibleRow$ = this.yPosition$
@@ -94,96 +119,27 @@ export class InfiniteTableComponent implements OnInit, AfterViewInit {
     this.visibleIndices$ = Observable.combineLatest(
       this.firstVisibleRow$, this.rowCount$,
       (firstVisibleRow, rowCount) => {
-        console.log(firstVisibleRow, rowCount);
 
-        return ['-'];
+        let indices: Array<number> = [];
+
+        const lastVisibleRow = firstVisibleRow + rowCount + 1;
+
+        if (lastVisibleRow > this.totalRows) {
+          firstVisibleRow -= lastVisibleRow - this.totalRows;
+        }
+
+        for (let i = 0; i <= rowCount; i++) {
+          indices.push(i + firstVisibleRow);
+        }
+
+        return indices;
       }
     );
 
-    this.visibleIndices$.subscribe(x => console.log(x));
-  }
-
-  ngAfterViewInit() {
-
-    //
-    // this.windowHeight$ = Observable.fromEvent(window, 'resize')
-    //   .debounceTime(50)
-    //   .map(() => this.phoneBook.nativeElement.clientHeight);
-    //
-    // const firstVisibleRow$ = this.yPosition$
-    //   .map(position => Math.floor(position / this.rowHeight))
-    //   .distinctUntilChanged()
-    //   .startWith(0);
-    //
-    // const screenHeight$ = Observable.of(this.phoneBook.nativeElement.clientHeight);
-    // const rowCount$ = screenHeight$
-    //   .map(screenHeight => Math.ceil(screenHeight / this.rowHeight))
-    //   .distinctUntilChanged();
-    //
-    // const visibleRowIndices$ = Observable.combineLatest(
-    //   firstVisibleRow$, rowCount$, (firstRow, rowCount) => {
-    //     const visibleIndices: any = [];
-    //
-    //     const lastRow = firstRow + rowCount + 1;
-    //
-    //     if (lastRow > this.totalResults) {
-    //       firstRow -= lastRow - this.totalResults;
-    //     }
-    //
-    //     for (let i = 0; i <= rowCount; i++) {
-    //       visibleIndices.push(i + firstRow);
-    //     }
-    //
-    //     return visibleIndices;
-    //   });
-    //
-    //
-    // const removedIndices$ = visibleRowIndices$
-    //   .bufferCount(2, 1)
-    //   .map(buffer => _.difference(_.first(buffer), _.last(buffer)))
-    //   .filter(difference => !_.isEmpty(difference));
-    //
-    // const addedIndices$ = visibleRowIndices$
-    //   .bufferCount(2, 1)
-    //   .map(buffer => _.difference(_.last(buffer), _.first(buffer)))
-    //   .filter(difference => !_.isEmpty(difference));
-    //
-    // let rows = {};
-    //
-    // const renderRow = (index: number) => {
-    //   const row = document.createElement('li');
-    //   row.innerText = index.toString();
-    //   row.style.top = index * this.rowHeight + 'px';
-    //   this.phoneBook.nativeElement.appendChild(row);
-    //   rows[index] = row;
-    // };
-    //
-    // const removeRow = (index: number) => {
-    //   if (!index) {
-    //     return;
-    //   }
-    //
-    //   rows[index].parentElement.removeChild(rows[index]);
-    //   rows[index] = null;
-    // };
-    //
-    // addedIndices$.subscribe(added => {
-    //   return _.map(added, renderRow);
-    // });
-    //
-    // removedIndices$.subscribe(removed => {
-    //   return _.map(removed, removeRow);
-    // });
-    //
-    // const init = () => {
-    //   const added: Array<number> = [];
-    //   for(let i = 0; i < 10; i++) {
-    //     added.push(i);
-    //   }
-    //   _.map(added, renderRow);
-    // };
-    //
-    // init();
-
+    this.visibleData$ = this.visibleIndices$
+      .map((indices: Array<number>) => indices.map((index) => ({
+        index: index,
+        value: this.data[index]
+      })));
   }
 }

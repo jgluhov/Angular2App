@@ -1,26 +1,23 @@
-:host >
-  .infinite-table-container
-    height: 420px
-
-.infinite-table-container
+.infinite-table-header
   > table
-    display flex
-    flex-flow column
-    height 100%
-    width 100%
+    margin-bottom 0
+    width calc(100% - 17px)
 
-    > thead
-      flex none
-      width calc(100% - 17px)
 
-    > tbody
-      flex 1 1 auto
-      display block
-      overflow-y scroll
+.infinite-table-content
+  position relative
+  height 380px
+  overflow-x hidden
 
+  > table
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+
+    tbody
+      flex: 1 1 auto;
       tr
         width 100%
-
-    > thead, tbody tr
-      display table
-      table-layout fixed
+        display table
+        table-layout fixed
+        position absolute
