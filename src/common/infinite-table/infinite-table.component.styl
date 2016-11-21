@@ -1,0 +1,26 @@
+:host >
+  .infinite-table-container
+    height: 420px
+
+.infinite-table-container
+  > table
+    display flex
+    flex-flow column
+    height 100%
+    width 100%
+
+    > thead
+      flex none
+      width calc(100% - 17px)
+
+    > tbody
+      flex 1 1 auto
+      display block
+      overflow-y scroll
+
+      tr
+        width 100%
+
+    > thead, tbody tr
+      display table
+      table-layout fixed
