@@ -1,5 +1,6 @@
 import {
-  Component, HostListener
+  Component,
+  HostListener
 } from '@angular/core';
 
 import {Title} from '@angular/platform-browser';
@@ -10,6 +11,8 @@ import 'rxjs/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toArray';
 
+import * as Faker from 'faker';
+
 @Component({
   templateUrl: './home.component.html'
 })
@@ -18,7 +21,7 @@ export class HomeComponent {
   questions: any[];
   isVisible: boolean;
 
-  MAX: number = 1000;
+  MAX: number = 4000;
 
   @HostListener('dblclick') onClick() {
     this.isVisible = !this.isVisible;
@@ -28,23 +31,71 @@ export class HomeComponent {
     private titleService: Title,
     private questionService: QuestionService
   ) {
+
+    console.log(Faker);
     this.setTitle('Home page');
     this.questions = questionService.getQuestions();
     this.isVisible = false;
   }
 
-  get data$() {
-    const dataArray = new Array(this.MAX);
-
-    return Observable.from(dataArray.fill(0))
-      .map(HomeComponent.generate)
-      .toArray();
+  private get dataSet() {
+    const dataArray = new Array(this.MAX).fill(0);
+    return dataArray.map(this.factory.bind(this));
   }
 
-  static generate(value: number, index: number): Object {
+  private get columns() {
+    return [
+      {
+        title: 'Index'
+      },
+      {
+        title: 'First name'
+      },
+      {
+        title: 'Last name'
+      },
+      {
+        title: 'Email'
+      },
+      {
+        title: 'Phone'
+      }
+    ];
+  }
+
+  public get tableConfiguration() {
     return {
-      index: index,
-      value: String.fromCharCode(index)
+      data: this.dataSet,
+      columns: this.columns,
+      height: 400
+    };
+  }
+
+  private toDateTimeFormat(date: Date) {
+    return new Intl.DateTimeFormat('en-US', this.dateOptions)
+      .format(date);
+  }
+
+  private factory(value: number, index: number): Object {
+    return {
+      id: index,
+      firstName: Faker.name.firstName(),
+      lastName: Faker.name.lastName(),
+      email: Faker.internet.email(),
+      phone: Faker.phone.phoneNumber()
+    };
+  }
+
+
+
+  private get dateOptions() {
+    return {
+      year: 'numeric',
+        month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
     };
   }
 

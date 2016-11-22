@@ -1,25 +1,32 @@
-<div class="infinite-table-container">
-  <div class="infinite-table-header" #headerRef>
-    <table class="table">
+<div>
+
+  <header #headerRef>
+    <table cellpadding="0" cellspacing="0" border="0">
       <thead>
       <tr>
-        <th># Index</th>
-        <th># Value 0</th>
+        <th *ngFor="let column of columns">{{column.title}}</th>
       </tr>
       </thead>
     </table>
-  </div>
-  <div #contentRef
-       class="infinite-table-content"
-       [style.height.px]="contentHeight">
-    <table class="table" [style.height.px]="totalHeight" #bodyRef>
+  </header>
+
+  <main #contentRef content
+        [contentHeight]="contentHeight"
+        (onScroll)="onScroll$.next($event)">
+
+    <table #bodyRef
+        [style.height.px]="totalHeight"
+        cellpadding="0"
+        cellspacing="0"
+        border="0">
       <tbody>
-      <tr *ngFor="let item of (visibleData$ | async)"
-          [style.top.px]="rowPositionCount(item.index)">
-        <td>{{item.index + 1}}</td>
-        <td>{{item.value}}</td>
+      <tr *ngFor="let item of (visibleData$ | async); trackBy: item?.id"
+          [style.top.px]="positionHandler(item.id)">
+        <td>{{item.id}}</td>
+        <td>{{item.firstName}}</td>
       </tr>
       </tbody>
     </table>
-  </div>
+  </main>
+
 </div>
