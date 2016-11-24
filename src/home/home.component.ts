@@ -42,8 +42,6 @@ export class HomeComponent {
     private titleService: Title,
     private questionService: QuestionService
   ) {
-
-
     this.setTitle('Home page');
     this.questions = questionService.getQuestions();
     this.isVisible = false;
