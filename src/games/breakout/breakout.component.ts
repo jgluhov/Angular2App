@@ -29,8 +29,10 @@ import {
   PADDLE_DIRECTION,
   PADDLE_POSITION,
   SCORE,
-  TICK
-} from './breakout.interfaces';
+  TICK,
+  UPDATE_GAME_PARAMS,
+  GAME_OBJECTS
+} from './breakout.types';
 
 @Component({
   templateUrl: './breakout.component.html',
@@ -190,7 +192,7 @@ export class BreakoutComponent implements AfterViewInit, OnDestroy {
 
   get objects$() {
 
-    const initialObjects = {
+    const initialObjects: GAME_OBJECTS = {
       ball: {
         position: {
           x: this.breakoutArea.nativeElement.width / 2,
@@ -263,7 +265,7 @@ export class BreakoutComponent implements AfterViewInit, OnDestroy {
       );
   }
 
-  update([, paddle, objects]) {
+  update([, paddle, objects]: UPDATE_GAME_PARAMS) {
     this.context.clearRect(0, 0, this.breakoutArea.nativeElement.width, this.breakoutArea.nativeElement.height);
 
     this.drawPaddle(paddle);

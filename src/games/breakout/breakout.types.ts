@@ -30,3 +30,24 @@ export type BALL = {
 }
 
 export type SCORE = number;
+
+export type COLLISIONS = {
+  paddle: boolean,
+  floor: boolean,
+  wall: boolean,
+  ceiling: boolean,
+  brick: boolean
+}
+
+export type GAME_OBJECTS = {
+  ball: BALL,
+  bricks: BRICK[],
+  collisions: COLLISIONS,
+  score: number
+};
+
+export type UPDATE_GAME_PARAMS = [
+  TICK,
+  PADDLE_DIRECTION,
+  GAME_OBJECTS
+];

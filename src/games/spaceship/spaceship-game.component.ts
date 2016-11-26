@@ -147,7 +147,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
     this.gameOver$.complete();
   }
 
-  get game$() {
+  get game$(): Observable<any> {
     return Observable.combineLatest(
       this.starStream$,
       this.spaceship$,
@@ -156,7 +156,12 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
       this.score$,
       this.health$,
       this.firePlayer$,
-      (stars, spaceship, enemies, playerShots, score, health) => {
+      (stars: Observable<Star[]>,
+       spaceship: Observable<Spaceship>,
+       enemies: Observable<Enemy[]>,
+       playerShots: Observable<Shot[]>,
+       score: Observable<number>,
+       health: Observable<number>) => {
         return {
           stars: stars,
           spaceship: spaceship,
@@ -169,7 +174,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
       .takeUntil(this.gameOver$);
   }
 
-  get starStream$() {
+  get starStream$(): Observable<Star[]> {
     const starsObservable$ = Observable.range(1, this.STAR_NUMBER)
       .map(() => {
         return {
@@ -340,7 +345,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
           isActive: true
         };
       })
-      .distinctUntilChanged(null, (shot: Shot) => shot.timestamp)
+      .distinctUntilChanged(null, (shot: any) => shot.timestamp)
       .scan(
         (shotArray: Array<Shot>, shot: Shot) => {
           shotArray.push({
@@ -376,7 +381,7 @@ export class SpaceshipGameComponent implements AfterViewInit, OnInit, OnDestroy 
       });
   }
 
-  get score$() {
+  get score$(): Observable<number> {
     return this.scoreSubject$
       .scan((previousScore: number, currentScore: number) => previousScore + currentScore, 0);
   }
