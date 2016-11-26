@@ -1,25 +1,7 @@
-@import "../variables.styl"
+@import '../mixins.styl'
+@import '../variables.styl'
 
-@font-face
-  font-family Ubuntu Mono
-  font-style normal
-  font-weight normal
-  src url($ubuntuMonoRegularUrl)
-
-@font-face
-  font-family Ubuntu Mono
-  font-style italic
-  font-weight normal
-  src url($ubuntuMonoRegularItalicUrl)
-
-@font-face
-  font-family Ubuntu Mono
-  font-style normal
-  font-weight bold
-  src url($ubuntuMonoBoldUrl)
-
-@font-face
-  font-family Ubuntu Mono
-  font-style italic
-  font-weight bold
-  src url($ubuntuMonoBoldItalicUrl)
+font-face('Ubuntu Mono', $ubuntuMonoRegular, $ubuntuMonoPath, normal, normal)
+font-face('Ubuntu Mono', $ubuntuMonoRegularItalic, $ubuntuMonoPath, normal, italic)
+font-face('Ubuntu Mono', $ubuntuMonoBold, $ubuntuMonoPath, bold, normal)
+font-face('Ubuntu Mono', $ubuntuMonoBoldItalic, $ubuntuMonoPath, bold, italic)
