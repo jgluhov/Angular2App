@@ -7,7 +7,11 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: '../home/home.module#HomeModule'
-  }
+  },
+  {
+    path: 'wikipedia',
+    loadChildren: '../miscellaneous/wikipedia/wikipedia.module#WikipediaModule'
+  },
 ];
 
 // export const gameRoutes: Routes = [

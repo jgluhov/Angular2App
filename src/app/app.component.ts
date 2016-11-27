@@ -4,8 +4,6 @@ import {
   ElementRef,
   Renderer
 } from '@angular/core';
-import {AppService} from './app.service';
-
 
 @Component({
   selector: 'app',
@@ -17,15 +15,30 @@ import {AppService} from './app.service';
 export class AppComponent implements OnInit {
   loaderElement: HTMLElement;
 
+  LOADED_CLASS_NAME: string = 'loaded';
+  transitionendListener: Function;
+
   constructor(
     private elementRef: ElementRef,
-    private appService: AppService,
     private renderer: Renderer
   ) {
     this.loaderElement = this.elementRef.nativeElement.previousElementSibling;
   }
 
   ngOnInit() {
-    this.appService.stopLoader(this.renderer, this.loaderElement);
+    this.stopLoader(this.loaderElement);
+  }
+
+  stopLoader(loaderElement: HTMLElement) {
+    this.renderer.setElementClass(loaderElement, this.LOADED_CLASS_NAME, true);
+
+    this.transitionendListener = this.renderer
+      .listen(loaderElement.lastElementChild, 'transitionend', () => {
+        loaderElement.parentElement.removeChild(loaderElement);
+      });
+  }
+
+  ngOnDestroy() {
+    this.transitionendListener();
   }
 }

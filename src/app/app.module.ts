@@ -3,7 +3,6 @@ import {HttpModule} from '@angular/http';
 import {BrowserModule}  from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import appRoutes from './app.routes';
-import {AppService} from './app.service';
 import {AuthGuard} from '../auth/auth-guard.service';
 import {AuthService} from '../auth/auth.service';
 import {AuthGitHub} from '../auth/auth-github.service';
@@ -22,7 +21,7 @@ import {NavbarModule} from '../navbar/navbar.module';
   bootstrap: [AppComponent],
   providers: [AuthGuard, AuthService, AuthGitHub, {
     provide: AppStore, useValue: store
-  }, AppService]
+  }]
 })
 
 export class AppModule {

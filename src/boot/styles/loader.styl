@@ -21,7 +21,7 @@ $sectionBackgroundColor = $colorSoSleepy
 $sectionAnimationTime = .7s
 $sectionDelayAnimationTime = .3s
 $sectionTransitionFn = cubic-bezier(0.645, 0.045, 0.355, 1.000)
-$sectionTransition = "all %s %s %s" % ($sectionAnimationTime $sectionDelayAnimationTime $sectionTransitionFn)
+$sectionTransition = "transform %s %s %s" % ($sectionAnimationTime $sectionDelayAnimationTime $sectionTransitionFn)
 
 set-box-position(n)
   top n
@@ -92,7 +92,11 @@ set-box-animation(time)
     > .loader-elements
       opacity 0
     > .loader-section
-      box-shadow 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset
+      animation shadow
+      animation-delay .3s
+      animation-duration 0
+      animation-timing-function $sectionTransition
+      animation-iteration-count 1
       &.left
         transform translateX(-100%)
       &.right
@@ -104,4 +108,10 @@ set-box-animation(time)
     transform rotateZ(0deg)
   to
     transform rotateZ(360deg)
+
+@keyframes shadow
+  from
+    box-shadow none
+  to
+    box-shadow 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset
 
