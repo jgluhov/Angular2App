@@ -1,13 +1,13 @@
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
-var helpers = require('./helpers');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const helpers = require('./helpers');
 
 module.exports = {
   entry: {
-    polyfills: './src/app/polyfills.ts',
-    vendor: './src/app/vendor.ts',
-    app: './src/app/main.ts'
+    polyfills: './src/boot/polyfills.ts',
+    vendor: './src/boot/vendor.ts',
+    main: './src/boot/main.ts'
   },
   output: {
     filename: '[name].js'
@@ -53,12 +53,12 @@ module.exports = {
       },
       {
         test: /\.styl$/,
-        exclude: helpers.root('src', 'app'),
+        exclude: helpers.root('src', 'boot'),
         loader: 'raw!stylus'
       },
       {
         test: /\.styl$/,
-        include: helpers.root('src', 'app'),
+        include: helpers.root('src', 'boot'),
         loader: ExtractTextWebpackPlugin.extract('style', 'css?sourceMap!stylus')
       }
     ]
@@ -68,7 +68,7 @@ module.exports = {
       name: ['app', 'vendor', 'polyfills']
     }),
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: './src/boot/index.html'
     })
   ]
 };
