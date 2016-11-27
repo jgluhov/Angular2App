@@ -1,48 +1,94 @@
-.loader-container
+$innerBoxWidth = 150px
+$innerBoxHeight = 150px
+
+$largeCircleColor = #3498db
+$mediumCircleColor = #e74c3c
+$smallCircleColor = #f9c922
+$largeCircleAnimationTime = 2s
+$mediumCircleAnimationTime = 3s
+$smallCircleAnimationTime = 1.5s
+
+$sectionHeight = 100%
+$sectionWidth = 100%
+$sectionBackgroundColor = #222222
+$sectionTransitionFunction = cubic-bezier(0.645, 0.045, 0.355, 1.000)
+$sectionBoxShadowWidth = 2px
+$sectionBoxShadowColor = rgba(50, 50, 50, 0.75)
+$sectionTransition = "all 0.7s 0.3s %s" % $sectionTransitionFunction
+$sectionLeftBoxShadow = "%s 0px 3px 0px %s" % ($sectionBoxShadowWidth $sectionBoxShadowColor)
+$sectionRightBoxShadow = "-%s 0px 3px 0px %s" % ($sectionBoxShadowWidth $sectionBoxShadowColor)
+
+set-position(n)
+  top n
+  left n
+  right n
+  bottom n
+
+#loader
   position fixed
   top 0
   left 0
   width 100%
   height 100%
   z-index 1000
+  display flex
+  align-items center
+  justify-content center
+  transition all .3s ease-out
 
-  > .elements
-    display block
-    position relative
-    left 50%
-    top 50%
-    width 150px
-    height 150px
-    margin -75px 0 0 -75px
+  > .loader-elements,
+  > .loader-elements:before,
+  > .loader-elements:after
     border 3px solid transparent
-    border-top-color #3498db
-    z-index 1500
     border-radius 50%
-    animation spin 2s linear infinite
+
+  > .loader-elements
+    display block
+    width $innerBoxWidth
+    height $innerBoxHeight
+    border-top-color $largeCircleColor
+    z-index 1500
+    animation 'spin %s linear infinite' % $largeCircleAnimationTime
+
+    &:before, &:after
+      content ''
+      position absolute
 
     &:before
-      content ''
-      position absolute
-      top 5px
-      left 5px
-      right 5px
-      bottom 5px
-      border 3px solid transparent
-      border-top-color #e74c3c
-      border-radius 50%
-      animation spin 3s linear infinite
+      set-position(5px)
+      border-top-color $mediumCircleColor
+      animation "spin %s linear infinite" % $mediumCircleAnimationTime
 
     &:after
-      content ''
-      position absolute
-      top 15px
-      left 15px
-      right 15px
-      bottom 15px
-      border 3px solid transparent
-      border-top-color #f9c922
-      border-radius 50%
-      animation spin 1.5s linear infinite
+      set-position(15px)
+      border-top-color $smallCircleColor
+      animation 'spin %s linear infinite' % $smallCircleAnimationTime
+
+  > .loader-section
+    position fixed
+    top 0
+    width $sectionWidth
+    height $sectionHeight
+    background $sectionBackgroundColor
+    z-index 1000
+    transition $sectionTransition
+
+    &.left
+      left 0
+      box-shadow $sectionLeftBoxShadow
+
+    &.right
+      right 0
+      box-shadow $sectionRightBoxShadow
+
+  &.loaded
+    > .loader-elements
+      display none
+    > .loader-section
+      &.left
+        transform translateX('calc(-100% - %s)' % $sectionBoxShadowWidth)
+      &.right
+        transform translateX('calc(100% - %s)' % $sectionBoxShadowWidth)
 
 
 @keyframes spin
