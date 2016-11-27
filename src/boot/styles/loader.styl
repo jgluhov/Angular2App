@@ -1,28 +1,36 @@
-$innerBoxWidth = 150px
-$innerBoxHeight = 150px
+@import './variables.styl'
 
-$largeCircleColor = #3498db
-$mediumCircleColor = #e74c3c
-$smallCircleColor = #f9c922
+$boxWidth = 150px
+$boxHeight = 150px
+
+$largeCircleColor = $colorCobalt
+$mediumCircleColor = $colorRed
+$smallCircleColor = $colorOrange
+
 $largeCircleAnimationTime = 2s
 $mediumCircleAnimationTime = 3s
 $smallCircleAnimationTime = 1.5s
 
-$sectionHeight = 100%
-$sectionWidth = 100%
-$sectionBackgroundColor = #222222
-$sectionTransitionFunction = cubic-bezier(0.645, 0.045, 0.355, 1.000)
-$sectionBoxShadowWidth = 2px
-$sectionBoxShadowColor = rgba(50, 50, 50, 0.75)
-$sectionTransition = "all 0.7s 0.3s %s" % $sectionTransitionFunction
-$sectionLeftBoxShadow = "%s 0px 3px 0px %s" % ($sectionBoxShadowWidth $sectionBoxShadowColor)
-$sectionRightBoxShadow = "-%s 0px 3px 0px %s" % ($sectionBoxShadowWidth $sectionBoxShadowColor)
+$elementsTransitionFn =  cubic-bezier(0.645, 0.045, 0.355, 1.000)
+$elementsTransition = 'all .3s %s' % $elementsTransitionFn
 
-set-position(n)
+$sectionHeight = 100%
+$sectionWidth = 50%
+$sectionBackgroundColor = $colorSoSleepy
+
+$sectionAnimationTime = .7s
+$sectionDelayAnimationTime = .3s
+$sectionTransitionFn = cubic-bezier(0.645, 0.045, 0.355, 1.000)
+$sectionTransition = "all %s %s %s" % ($sectionAnimationTime $sectionDelayAnimationTime $sectionTransitionFn)
+
+set-box-position(n)
   top n
   left n
   right n
   bottom n
+
+set-box-animation(time)
+  animation 'spin %s linear infinite' % time
 
 #loader
   position fixed
@@ -34,7 +42,6 @@ set-position(n)
   display flex
   align-items center
   justify-content center
-  transition all .3s ease-out
 
   > .loader-elements,
   > .loader-elements:before,
@@ -44,25 +51,27 @@ set-position(n)
 
   > .loader-elements
     display block
-    width $innerBoxWidth
-    height $innerBoxHeight
+    width $boxWidth
+    height $boxHeight
     border-top-color $largeCircleColor
     z-index 1500
-    animation 'spin %s linear infinite' % $largeCircleAnimationTime
+    set-box-animation($largeCircleAnimationTime)
+    transition $elementsTransition
+    opacity 1
 
     &:before, &:after
       content ''
       position absolute
 
     &:before
-      set-position(5px)
+      set-box-position(5px)
       border-top-color $mediumCircleColor
-      animation "spin %s linear infinite" % $mediumCircleAnimationTime
+      set-box-animation($mediumCircleAnimationTime)
 
     &:after
-      set-position(15px)
+      set-box-position(15px)
       border-top-color $smallCircleColor
-      animation 'spin %s linear infinite' % $smallCircleAnimationTime
+      set-box-animation($smallCircleAnimationTime)
 
   > .loader-section
     position fixed
@@ -75,25 +84,24 @@ set-position(n)
 
     &.left
       left 0
-      box-shadow $sectionLeftBoxShadow
 
     &.right
       right 0
-      box-shadow $sectionRightBoxShadow
 
   &.loaded
     > .loader-elements
-      display none
+      opacity 0
     > .loader-section
+      box-shadow 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset
       &.left
-        transform translateX('calc(-100% - %s)' % $sectionBoxShadowWidth)
+        transform translateX(-100%)
       &.right
-        transform translateX('calc(100% - %s)' % $sectionBoxShadowWidth)
+        transform translateX(100%)
 
 
 @keyframes spin
   from
-    transform rotate(0deg)
+    transform rotateZ(0deg)
   to
-    transform rotate(360deg)
+    transform rotateZ(360deg)
 

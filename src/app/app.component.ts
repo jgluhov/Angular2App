@@ -4,6 +4,7 @@ import {
   ElementRef,
   Renderer
 } from '@angular/core';
+import {AppService} from './app.service';
 
 
 @Component({
@@ -14,13 +15,17 @@ import {
 })
 
 export class AppComponent implements OnInit {
-  loader: HTMLElement;
+  loaderElement: HTMLElement;
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer) {
-    this.loader = this.elementRef.nativeElement.previousElementSibling;
+  constructor(
+    private elementRef: ElementRef,
+    private appService: AppService,
+    private renderer: Renderer
+  ) {
+    this.loaderElement = this.elementRef.nativeElement.previousElementSibling;
   }
 
   ngOnInit() {
-    this.renderer.setElementClass(this.loader, 'loaded', true);
+    this.appService.stopLoader(this.renderer, this.loaderElement);
   }
 }
