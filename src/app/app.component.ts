@@ -1,15 +1,12 @@
 import {
   Component,
   OnInit,
-  ElementRef,
   Renderer
 } from '@angular/core';
 
 @Component({
   selector: 'app',
-  template: `
-    <router-outlet></router-outlet>
-  `
+  template: `<router-outlet></router-outlet>`
 })
 
 export class AppComponent implements OnInit {
@@ -18,23 +15,20 @@ export class AppComponent implements OnInit {
   LOADED_CLASS_NAME: string = 'loaded';
   transitionendListener: Function;
 
-  constructor(
-    private elementRef: ElementRef,
-    private renderer: Renderer
-  ) {
-    this.loaderElement = this.elementRef.nativeElement.previousElementSibling;
+  constructor(private renderer: Renderer) {
+    this.loaderElement = document.getElementById('loader');
   }
 
   ngOnInit() {
-    this.stopLoader(this.loaderElement);
+    this.stopLoader();
   }
 
-  stopLoader(loaderElement: HTMLElement) {
-    this.renderer.setElementClass(loaderElement, this.LOADED_CLASS_NAME, true);
+  stopLoader() {
+    this.renderer.setElementClass(this.loaderElement, this.LOADED_CLASS_NAME, true);
 
     this.transitionendListener = this.renderer
-      .listen(loaderElement.lastElementChild, 'transitionend', () => {
-        loaderElement.parentElement.removeChild(loaderElement);
+      .listen(this.loaderElement.lastElementChild, 'transitionend', () => {
+        this.loaderElement.parentElement.removeChild(this.loaderElement);
       });
   }
 
