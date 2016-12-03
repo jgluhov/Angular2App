@@ -15,6 +15,7 @@ import 'lodash';
 // Immutable
 import 'immutable';
 
+require('spinning-preloader');
 // Bootstrap
 // window['jQuery'] = window['$'] =  require('jquery/dist/jquery');
 // require('bootstrap/js/dropdown');

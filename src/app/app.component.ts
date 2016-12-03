@@ -10,25 +10,25 @@ import {
 })
 
 export class AppComponent implements OnInit {
-  loaderElement: HTMLElement;
+  spinnerElement: Element;
 
-  LOADED_CLASS_NAME: string = 'loaded';
+  LOADED_CLASS_NAME: string = 'complete';
   transitionendListener: Function;
 
   constructor(private renderer: Renderer) {
-    this.loaderElement = document.getElementById('loader');
+    this.spinnerElement = document.querySelector('.spinner-preloader-container');
   }
 
   ngOnInit() {
-    this.stopLoader();
+    this.stop();
   }
 
-  stopLoader() {
-    this.renderer.setElementClass(this.loaderElement, this.LOADED_CLASS_NAME, true);
+  stop() {
+    this.renderer.setElementClass(this.spinnerElement, this.LOADED_CLASS_NAME, true);
 
     this.transitionendListener = this.renderer
-      .listen(this.loaderElement.lastElementChild, 'transitionend', () => {
-        this.loaderElement.parentElement.removeChild(this.loaderElement);
+      .listen(this.spinnerElement, 'transitionend', () => {
+        this.spinnerElement.parentElement.removeChild(this.spinnerElement);
       });
   }
 
