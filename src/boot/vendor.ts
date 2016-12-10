@@ -15,7 +15,7 @@ import 'lodash';
 // Immutable
 import 'immutable';
 
-require('spinning-preloader');
+require('ng2-spinning-preloader/dist/ng-spinning-preloader.css');
 // Bootstrap
 // window['jQuery'] = window['$'] =  require('jquery/dist/jquery');
 // require('bootstrap/js/dropdown');
