@@ -14,14 +14,23 @@ import {
 } from './app-store';
 
 import {NavbarModule} from '../navbar/navbar.module';
+import {NgSpinningPreloader} from 'ng2-spinning-preloader';
+
+
 
 @NgModule({
   imports: [BrowserModule, appRoutes, HttpModule, NavbarModule],
   declarations: [AppComponent, ProfileComponent],
   bootstrap: [AppComponent],
-  providers: [AuthGuard, AuthService, AuthGitHub, {
-    provide: AppStore, useValue: store
-  }]
+  providers: [
+    AuthGuard,
+    AuthService,
+    AuthGitHub,
+    NgSpinningPreloader,
+    {
+      provide: AppStore, useValue: store
+    }
+  ]
 })
 
 export class AppModule {

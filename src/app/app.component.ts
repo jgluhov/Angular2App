@@ -1,8 +1,8 @@
 import {
   Component,
-  OnInit,
-  Renderer
+  OnInit
 } from '@angular/core';
+import {NgSpinningPreloader} from 'ng2-spinning-preloader';
 
 @Component({
   selector: 'app',
@@ -10,29 +10,10 @@ import {
 })
 
 export class AppComponent implements OnInit {
-  spinnerElement: Element;
 
-  LOADED_CLASS_NAME: string = 'complete';
-  transitionendListener: Function;
-
-  constructor(private renderer: Renderer) {
-    this.spinnerElement = document.querySelector('.spinner-preloader-container');
-  }
+  constructor(private ngSpinningPreloader: NgSpinningPreloader) {}
 
   ngOnInit() {
-    this.stop();
-  }
-
-  stop() {
-    this.renderer.setElementClass(this.spinnerElement, this.LOADED_CLASS_NAME, true);
-
-    this.transitionendListener = this.renderer
-      .listen(this.spinnerElement, 'transitionend', () => {
-        this.spinnerElement.parentElement.removeChild(this.spinnerElement);
-      });
-  }
-
-  ngOnDestroy() {
-    this.transitionendListener();
+    this.ngSpinningPreloader.stop();
   }
 }
