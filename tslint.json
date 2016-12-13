@@ -1,4 +1,8 @@
 {
+  "ecmaFeatures": {
+    "modules": true,
+    "experimentalDecorators": true
+  },
   "rules": {
     "align": [true,
       "parameters",
